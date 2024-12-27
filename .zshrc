@@ -1,7 +1,8 @@
 export PATH=$HOME/brew/bin:$PATH
 export LANG=en_US.UTF-8
+export EZA_CONFIG_DIR=$HOME/.config/eza
 
-alias ls='colorls -a'
+alias ls='eza --icons -a --sort=type'
 
 # nvm setup
 export NVM_DIR="$HOME/.nvm"
