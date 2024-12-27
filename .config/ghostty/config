@@ -1,0 +1,5 @@
+theme = catppuccin-mocha
+background = #11111B
+fullscreen
+macos-non-native-fullscreen = true
+font-size = 21
