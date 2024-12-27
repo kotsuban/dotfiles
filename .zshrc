@@ -3,8 +3,6 @@ export LANG=en_US.UTF-8
 
 alias ls='colorls -a'
 
-eval "$(fzf --zsh)"
-
 # nvm setup
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" 
@@ -35,3 +33,6 @@ preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
 
 source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+eval "$(fzf --zsh)"
+eval "$(starship init zsh)"
