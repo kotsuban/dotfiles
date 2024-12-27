@@ -1,10 +1,4 @@
 export PATH=$HOME/brew/bin:$PATH
-export ZSH="$HOME/.oh-my-zsh"
-
-plugins=(git)
-
-source $ZSH/oh-my-zsh.sh
-
 export LANG=en_US.UTF-8
 
 alias ls='colorls -a'
