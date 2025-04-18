@@ -29,5 +29,15 @@ return {
        },
       },
     },
+    scratch = {
+      ft = function()
+        return "markdown"
+      end,
+      filekey = {
+        cwd = true,
+        branch = false,
+        count = false,
+      },
+    },
   },
 }
