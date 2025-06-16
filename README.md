@@ -4,6 +4,8 @@
 <img width="1440" alt="SCR-20250304-pbyp" src="https://github.com/user-attachments/assets/2ca0e05d-f0ed-428f-a55e-d7e8ebbcef3a" />
 
 ## Installation
-Press `stow .` and hope it doesn't blow up
 
+To install specific config use `stow folder-name`, for example:
 
+- `stow nvim` - install nvim config.
+- `stow macos-zsh` install zsh config for macos.
