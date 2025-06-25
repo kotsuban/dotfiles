@@ -1,50 +1,99 @@
+-- Based on https://github.com/nvim-lualine/lualine.nvim/blob/master/examples/evil_lualine.lua
+
+local colors = {
+  bg = "#11111B",
+  fg = "#89b4fa",
+  mauve = "#cba6f7",
+  text = "#cdd6f4",
+}
+
+local conditions = {
+  buffer_not_empty = function()
+    return vim.fn.empty(vim.fn.expand("%:t")) ~= 1
+  end,
+}
+
 return {
   {
     "nvim-lualine/lualine.nvim",
     event = "VeryLazy",
     opts = function()
-      local custom_catppuccin = require("lualine.themes.catppuccin-mocha")
-      custom_catppuccin.normal.c.bg = "#1e1e2e"
-      return {
+      local config = {
         options = {
-          icons_enabled = true,
-          theme = custom_catppuccin,
-          component_separators = { left = "", right = "" },
-          section_separators = { left = "", right = "" },
-          disabled_filetypes = {
-            statusline = {},
-            winbar = {},
-          },
-          ignore_focus = {},
-          always_divide_middle = true,
-          globalstatus = false,
-          refresh = {
-            statusline = 1000,
-            tabline = 1000,
-            winbar = 1000,
+          component_separators = "",
+          section_separators = "",
+          theme = {
+            normal = { c = { fg = colors.fg, bg = colors.bg } },
+            inactive = { c = { fg = colors.fg, bg = colors.bg } },
           },
         },
         sections = {
-          lualine_a = { "mode" },
-          lualine_b = { { "branch", icon = "" } },
-          lualine_c = { "filename", "diff" },
-          lualine_x = { "diagnostics" },
-          lualine_y = { "progress" },
-          lualine_z = { "location" },
+          lualine_a = {},
+          lualine_b = {},
+          lualine_y = {},
+          lualine_z = {},
+          lualine_c = {},
+          lualine_x = {},
         },
         inactive_sections = {
           lualine_a = {},
           lualine_b = {},
-          lualine_c = { "filename" },
-          lualine_x = { "location" },
           lualine_y = {},
           lualine_z = {},
+          lualine_c = {},
+          lualine_x = {},
         },
-        tabline = {},
-        winbar = {},
-        inactive_winbar = {},
-        extensions = {},
       }
+
+      -- Inserts a component in lualine_c at left section
+      local function ins_left(component)
+        table.insert(config.sections.lualine_c, component)
+      end
+
+      -- Inserts a component in lualine_x at right section
+      local function ins_right(component)
+        table.insert(config.sections.lualine_x, component)
+      end
+
+      ins_left({
+        "filename",
+        cond = conditions.buffer_not_empty,
+        color = { fg = colors.fg, gui = "bold" },
+      })
+
+      ins_left({
+        "diff",
+        cond = conditions.buffer_not_empty,
+      })
+
+      ins_right({
+        "diagnostics",
+        cond = conditions.buffer_not_empty,
+      })
+
+      ins_right({
+        function()
+          return vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+        end,
+        color = { fg = colors.mauve, gui = "bold" },
+        padding = { right = 0 },
+      })
+
+      ins_right({
+        function()
+          return "on"
+        end,
+        color = { fg = colors.text },
+      })
+
+      ins_right({
+        "branch",
+        icon = "",
+        color = { gui = "bold" },
+        padding = { left = 0, right = 1 },
+      })
+
+      return config
     end,
   },
 }
