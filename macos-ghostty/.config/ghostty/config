@@ -3,6 +3,7 @@ background = #11111B
 cursor-invert-fg-bg = true
 font-size = 16
 macos-non-native-fullscreen = true
+macos-option-as-alt = true
 fullscreen
 window-padding-x = 0
 window-padding-y = 0
