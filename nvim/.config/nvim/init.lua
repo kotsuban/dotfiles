@@ -232,7 +232,7 @@ vim.diagnostic.config({
   },
 })
 
-vim.lsp.enable({ "clangd", "lua_ls", "ts_ls" }) -- https://github.com/neovim/nvim-lspconfig
+vim.lsp.enable({ "clangd", "lua_ls", "ts_ls", "eslint" }) -- https://github.com/neovim/nvim-lspconfig
 
 vim.api.nvim_create_user_command("LspInfo", function()
   local clients = vim.lsp.get_clients({ bufnr = 0 })
