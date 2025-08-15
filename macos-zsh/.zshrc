@@ -6,6 +6,7 @@ export VISUAL=nvim
 export MANPAGER="nvim +Man!"
 
 alias ls='eza --icons -a --sort=type'
+alias fastmux="sh ~/dotfiles/scripts/fastmux.sh"
 
 bindkey -v
 
