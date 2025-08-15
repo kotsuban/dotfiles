@@ -117,7 +117,7 @@ local toggle_scratch_buffer = function()
   local uv = vim.uv or vim.loop
   local cwd = vim.uv.cwd()
   local scratch_dir = vim.fn.stdpath("data") .. "/scratch"
-  local scratch_file = scratch_dir .. "/" .. vim.fn.fnamemodify(cwd, ":p:h:t") .. ".md"
+  local scratch_file = scratch_dir .. "/" .. cwd:gsub("^/", ""):gsub("/", "%%") .. ".md"
 
   vim.fn.mkdir(scratch_dir, "p")
 
@@ -159,7 +159,6 @@ local toggle_scratch_buffer = function()
   end
 
   -- If currently viewing scratch → close it and return
-  print(vim.api.nvim_get_current_buf(), buf)
   if vim.api.nvim_get_current_buf() == buf then
     vim.cmd("b#")
     return
