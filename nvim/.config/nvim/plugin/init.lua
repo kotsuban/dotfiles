@@ -1,6 +1,5 @@
 -- Settings.
 vim.g.mapleader = " "
-vim.g.maplocalleader = " "
 vim.g.have_nerd_font = true
 vim.o.number = true
 vim.o.pumblend = 10
@@ -52,15 +51,6 @@ vim.o.grepprg = "rg --vimgrep --no-heading --smart-case"
 vim.schedule(function()
   vim.o.clipboard = "unnamedplus" -- Use system clipboard for all yank/paste.
 end)
-
--- Plugins.
-local plugin_dir = vim.fn.stdpath("config") .. "/lua/plugins"
-for _, file in ipairs(vim.fn.glob(plugin_dir .. "/*.lua", false, true)) do
-  local name = file:match("([^/]+)%.lua$")
-  if name and name ~= "init" then
-    require("plugins." .. name)
-  end
-end
 
 -- Helpers.
 local oldfiles_list = function()
@@ -123,7 +113,6 @@ local toggle_scratch_buffer = function()
 
   local buf
 
-  -- Find existing scratch buffer for this CWD
   for _, b in ipairs(vim.api.nvim_list_bufs()) do
     if vim.api.nvim_buf_is_valid(b) and vim.api.nvim_buf_get_name(b) == cwd then
       buf = b
@@ -131,7 +120,6 @@ local toggle_scratch_buffer = function()
     end
   end
 
-  -- Create new scratch buffer if not found
   if not buf then
     buf = vim.api.nvim_create_buf(false, true)
     vim.api.nvim_buf_set_name(buf, cwd)
@@ -140,13 +128,11 @@ local toggle_scratch_buffer = function()
     vim.bo[buf].swapfile = false
     vim.bo[buf].bufhidden = "wipe"
 
-    -- Load existing scratch file content if present
     if uv.fs_stat(scratch_file) then
       local lines = vim.fn.readfile(scratch_file)
       vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
     end
 
-    -- Auto-save content to file on hide/leave
     local augroup = vim.api.nvim_create_augroup("scratch_autosave_" .. buf, { clear = true })
     vim.api.nvim_create_autocmd({ "BufLeave", "BufHidden" }, {
       group = augroup,
@@ -158,13 +144,11 @@ local toggle_scratch_buffer = function()
     })
   end
 
-  -- If currently viewing scratch → close it and return
   if vim.api.nvim_get_current_buf() == buf then
     vim.cmd("b#")
     return
   end
 
-  -- Show scratch buffer in current window
   vim.api.nvim_win_set_buf(0, buf)
 end
 
@@ -192,8 +176,6 @@ vim.keymap.set("n", "<leader>sv", ":vsplit<CR>", { desc = "Split window vertical
 vim.keymap.set("n", "<leader>sh", ":split<CR>", { desc = "Split window horizontally" })
 vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
 vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
-vim.keymap.set("n", "<A-k>", "<cmd>cprev<CR>", { desc = "Quick fix next" })
-vim.keymap.set("n", "<A-j>", "<cmd>cnext<CR>", { desc = "Quick fix prev" })
 vim.keymap.set("n", "<leader>s", 'q:isilent grep "test" | copen', { desc = "Search via grep" })
 vim.keymap.set("n", "<leader>sw", grep_under_cursor, { desc = "Search current word via grep" })
 vim.keymap.set("n", "<leader><leader>", ":find ", { desc = "Find file" })
@@ -204,23 +186,97 @@ vim.keymap.set("i", '"', '""<left>')
 vim.keymap.set("i", "(", "()<left>")
 vim.keymap.set("i", "[", "[]<left>")
 vim.keymap.set("i", "{", "{}<left>")
-vim.keymap.set("i", "{;", "{};<left><left>")
-vim.keymap.set("i", "/*", "/**/<left><left>")
+vim.keymap.set('n', '<C-h>', '<C-w>h', { desc = "Move to the left pane" })
+vim.keymap.set('n', '<C-j>', '<C-w>j', { desc = "Move to the bottom pane" })
+vim.keymap.set('n', '<C-k>', '<C-w>k', { desc = "Move to the top pane" })
+vim.keymap.set('n', '<C-l>', '<C-w>l', { desc = "Move to the right pane" })
+
+-- Statusline.
+local colors = require("catppuccin.palettes").get_palette "mocha"
+
+vim.api.nvim_set_hl(0, "StatusLineBlue", { fg = colors.blue, bold = true })
+vim.api.nvim_set_hl(0, "StatusLineMauve", { fg = colors.mauve, bold = true })
+vim.api.nvim_set_hl(0, "StatusLineWhite", { fg = colors.white, bold = false })
+vim.api.nvim_set_hl(0, "StatusLineYellow", { fg = colors.yellow, bold = false })
+vim.api.nvim_set_hl(0, "StatusLineRed", { fg = colors.red, bold = false })
+vim.api.nvim_set_hl(0, "StatusLineTeal", { fg = colors.teal, bold = false })
+vim.api.nvim_set_hl(0, "StatusLineSky", { fg = colors.sky, bold = false })
+vim.api.nvim_set_hl(0, "StatusLineGreen", { fg = colors.green, bold = false })
+
+_G.directory = function()
+  return vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+end
+_G.diagnostics = function(symbol, type)
+  local count = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity[type] })
+  return count > 0 and symbol .. count .. " " or ""
+end
+_G.diff = function(symbol, type)
+  local gitsigns = vim.b.gitsigns_status_dict
+  if not gitsigns or gitsigns.head == '' then
+    return ''
+  end
+  return gitsigns[type] and gitsigns[type] > 0 and (symbol .. gitsigns[type] .. " ") or ""
+end
+_G.branch = function()
+  local git_dir = vim.fn.finddir(".git", ".;")
+  if git_dir == "" then
+    return ""
+  end
+
+  local head_file = git_dir .. "/HEAD"
+  local f = io.open(head_file)
+  if not f then return "" end
+  local head = f:read("*l")
+  f:close()
+
+  local branch = head:match("ref: refs/heads/(.+)")
+  if not branch then
+    branch = head:sub(1, 6)
+  end
+
+  return " " .. branch
+end
+
+vim.o.statusline = table.concat {
+  "%#StatusLineBlue#",
+  " %t %h%m%r ",
+  "%#StatusLineGreen#",
+  "%{v:lua.diff('+', 'added')}",
+  "%#StatusLineYellow#",
+  "%{v:lua.diff('~', 'changed')}",
+  "%#StatusLineRed#",
+  "%{v:lua.diff('-', 'removed')}",
+  "%=",
+  "%#StatusLineTeal#",
+  "%{v:lua.diagnostics('󰌶 ', 'HINT')}",
+  "%#StatusLineSky#",
+  "%{v:lua.diagnostics('󰋽 ', 'INFO')}",
+  "%#StatusLineRed#",
+  "%{v:lua.diagnostics('󰅚 ', 'ERROR')}",
+  "%#StatusLineYellow#",
+  "%{v:lua.diagnostics('󰀪 ', 'WARN')}",
+  "%#StatusLineMauve#",
+  "%{v:lua.directory()}",
+  "%#StatusLineWhite#",
+  " on ",
+  "%#StatusLineBlue#",
+  "%{v:lua.branch()} ",
+}
 
 -- Lsp.
 vim.diagnostic.config({
   signs = {
     active = true,
     text = {
-      [vim.diagnostic.severity.ERROR] = "󰅚 ",
-      [vim.diagnostic.severity.WARN] = "󰀪 ",
-      [vim.diagnostic.severity.HINT] = "󰌶 ",
-      [vim.diagnostic.severity.INFO] = " ",
+      [vim.diagnostic.severity.ERROR] = '󰅚 ',
+      [vim.diagnostic.severity.WARN] = '󰀪 ',
+      [vim.diagnostic.severity.HINT] = '󰋽 ',
+      [vim.diagnostic.severity.INFO] = '󰌶 ',
     },
   },
   virtual_text = true,
   underline = true,
-  update_in_insert = false,
+  update_in_insert = true,
   severity_sort = true,
   float = {
     focusable = true,
@@ -257,7 +313,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
     -- Information.
     vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-    vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
+    vim.keymap.set("n", "<leader>ck", vim.lsp.buf.signature_help, opts)
 
     -- Code actions.
     vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
@@ -300,13 +356,5 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     if mark[1] > 0 and mark[1] <= lcount then
       pcall(vim.api.nvim_win_set_cursor, 0, mark)
     end
-  end,
-})
-
--- Close quickfix after pressing <CR> on an item
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "qf",
-  callback = function()
-    vim.keymap.set("n", "<CR>", "<CR>:cclose<CR>", { buffer = true })
   end,
 })
