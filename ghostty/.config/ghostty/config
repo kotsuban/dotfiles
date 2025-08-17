@@ -4,3 +4,6 @@ font-size = 16
 window-padding-x = 0
 window-padding-y = 0
 keybind = global:cmd+shift+grave_accent=toggle_quick_terminal
+macos-non-native-fullscreen = true
+macos-option-as-alt = true
+fullscreen
