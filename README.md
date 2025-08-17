@@ -1,12 +1,13 @@
-# My dotfiles (arch / macos)
+# My dotfiles (macos)
 
-- `arch-*` - arch specific config.
-- `macos-*` - macos specific config.
-- rest are common configs that can be used on both systems.
+## Deps
+- brew git bob eza fzf ripgrep starship stow tmux zsh-autosuggestions zsh-syntax-highlighting zsh-vi-mode
 
 ## Installation
 
+Make sure you're on a `macos` branch.
+
 To install specific config use `stow folder-name`, for example:
 
-- `stow nvim` - install common nvim config.
-- `stow macos-zsh` install zsh config for macos.
+- `stow nvim` - install nvim config.
+- `stow zsh` install config.
