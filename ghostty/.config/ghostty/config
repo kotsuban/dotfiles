@@ -7,3 +7,5 @@ keybind = global:cmd+shift+grave_accent=toggle_quick_terminal
 macos-non-native-fullscreen = true
 macos-option-as-alt = true
 fullscreen
+
+theme = catppuccin-mocha
