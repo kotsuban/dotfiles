@@ -181,15 +181,12 @@ vim.keymap.set("n", "<leader>sw", grep_under_cursor, { desc = "Search current wo
 vim.keymap.set("n", "<leader><leader>", ":find ", { desc = "Find file" })
 vim.keymap.set("n", "<leader>fr", oldfiles_list, { desc = "Open old files" })
 vim.keymap.set("n", "<leader>.", toggle_scratch_buffer, { desc = "Open scratch buffer" })
+vim.keymap.set("n", "<leader>gg", '<cmd>G<CR>', { desc = "Open git fugitive" })
 vim.keymap.set("i", "'", "''<left>")
 vim.keymap.set("i", '"', '""<left>')
 vim.keymap.set("i", "(", "()<left>")
 vim.keymap.set("i", "[", "[]<left>")
 vim.keymap.set("i", "{", "{}<left>")
-vim.keymap.set('n', '<C-h>', '<C-w>h', { desc = "Move to the left pane" })
-vim.keymap.set('n', '<C-j>', '<C-w>j', { desc = "Move to the bottom pane" })
-vim.keymap.set('n', '<C-k>', '<C-w>k', { desc = "Move to the top pane" })
-vim.keymap.set('n', '<C-l>', '<C-w>l', { desc = "Move to the right pane" })
 
 -- Statusline.
 local colors = require("catppuccin.palettes").get_palette "mocha"
@@ -288,7 +285,7 @@ vim.diagnostic.config({
   },
 })
 
-vim.lsp.enable({ "clangd", "lua_ls", "ts_ls", "eslint" }) -- https://github.com/neovim/nvim-lspconfig
+vim.lsp.enable({ "clangd", "lua_ls", "ts_ls", "eslint", "stylelint-lsp", "somesass_ls" }) -- https://github.com/neovim/nvim-lspconfig
 
 vim.api.nvim_create_user_command("LspInfo", function()
   local clients = vim.lsp.get_clients({ bufnr = 0 })
