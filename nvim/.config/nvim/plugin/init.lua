@@ -1,29 +1,15 @@
--- Settings.
 vim.g.mapleader = " "
-vim.g.have_nerd_font = true
 vim.o.number = true
-vim.o.pumblend = 10
-vim.o.pumheight = 10
 vim.o.relativenumber = true
-vim.o.ruler = false
-vim.o.showmode = false
-vim.o.sidescrolloff = 8
-vim.o.breakindent = true
 vim.o.undofile = true
-vim.o.undolevels = 10000
 vim.o.ignorecase = true
 vim.o.winborder = "rounded"
 vim.o.smartcase = true
 vim.o.smartindent = true
 vim.o.signcolumn = "yes"
-vim.o.numberwidth = 1
-vim.o.conceallevel = 2
-vim.o.updatetime = 200
-vim.o.virtualedit = "block"
-vim.o.wildmode = "longest:full,full" -- TODO Try to fix dotfiles issue (:find can't locate files under a .directory)
-vim.o.wildignore = "*/node_modules/*,*/dist/*,*/static/*,*/__pycache__/*,*.log"
-vim.o.winminwidth = 5
-vim.o.timeoutlen = 500
+vim.o.updatetime = 500
+vim.o.wildmode = "longest:full,full"
+vim.o.wildignore = "*/node_modules/*,*/dist/*,*/static/*,*/__pycache__/*,*.log,*.git,*.venv,*.cache"
 vim.o.splitright = true
 vim.o.splitbelow = true
 vim.o.splitkeep = "screen"
@@ -33,26 +19,41 @@ vim.o.tabstop = 2
 vim.o.termguicolors = true
 vim.o.shiftwidth = 2
 vim.o.expandtab = true
-vim.o.fillchars = "foldopen:,foldclose:,fold: ,foldsep: ,diff:╱,eob: "
-vim.o.foldlevel = 99
 vim.o.wrap = false
 vim.o.swapfile = false
 vim.o.inccommand = "nosplit"
 vim.o.jumpoptions = "view"
-vim.o.laststatus = 3
 vim.o.linebreak = true
-vim.o.cursorline = true
-vim.o.scrolloff = 4
 vim.o.confirm = true
-vim.o.shiftround = true
-vim.o.shiftwidth = 2
-vim.o.path = ".,**"
 vim.o.grepprg = "rg --vimgrep --no-heading --smart-case"
 vim.schedule(function()
-  vim.o.clipboard = "unnamedplus" -- Use system clipboard for all yank/paste.
+  vim.o.clipboard = "unnamedplus"
 end)
+vim.o.complete = ".,o"
+vim.o.completeopt = "fuzzy,menuone,noselect"
+vim.o.autocomplete = true
 
 -- Helpers.
+local generate_path = function()
+  local ignore = { "node_modules", "dist", "build", ".git", ".cache", "static", "__pycache__", ".venv" }
+
+  local handle = vim.loop.fs_scandir(vim.loop.cwd())
+  local dirs = { ".,," }
+  if handle then
+    while true do
+      local name, t = vim.loop.fs_scandir_next(handle)
+      if not name then break end
+      if t == "directory" and not vim.tbl_contains(ignore, name) then
+        table.insert(dirs, name .. "/**")
+      end
+    end
+  end
+
+  return table.concat(dirs, ",")
+end
+
+vim.o.path = generate_path()
+
 local oldfiles_list = function()
   local current_file = vim.fn.expand("%:p")
   local items = {}
@@ -152,24 +153,12 @@ local toggle_scratch_buffer = function()
   vim.api.nvim_win_set_buf(0, buf)
 end
 
-local format_buffer = function()
-  vim.lsp.buf.format({ async = false })
-  vim.cmd.write()
-end
-
 -- Keymaps.
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Exit from search mode" })
 vim.keymap.set({ "n", "v", "i" }, "<Esc><Esc>", ":silent! close<CR>", { desc = "Close current window" })
 vim.keymap.set("v", "v", "g_", { noremap = true, desc = "Visual to end of line (non-newline)" })
 vim.keymap.set("n", "<leader>`", "<C-^>", { noremap = true, desc = "Swap with previous file" })
 vim.keymap.set("n", "<leader>o", ":update<CR> :source<CR>", { desc = "Reload nvim config" })
-vim.keymap.set("n", "<leader>fm", format_buffer, { desc = "Format current buffer" })
-vim.keymap.set(
-  "v",
-  "<leader>r",
-  '"hy:%s/<C-r>h//g<left><left>',
-  { desc = "Replace all instances of highlighted words" }
-)
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selected code down" })
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selected code up" })
 vim.keymap.set("n", "<leader>sv", ":vsplit<CR>", { desc = "Split window vertically" })
@@ -187,6 +176,12 @@ vim.keymap.set("i", '"', '""<left>')
 vim.keymap.set("i", "(", "()<left>")
 vim.keymap.set("i", "[", "[]<left>")
 vim.keymap.set("i", "{", "{}<left>")
+vim.keymap.set(
+  "v",
+  "<leader>r",
+  '"hy:%s/<C-r>h//g<left><left>',
+  { desc = "Replace all instances of highlighted words" }
+)
 
 -- Statusline.
 local colors = require("catppuccin.palettes").get_palette "mocha"
@@ -262,16 +257,10 @@ vim.o.statusline = table.concat {
 
 -- Lsp.
 vim.diagnostic.config({
-  signs = {
-    active = true,
-    text = {
-      [vim.diagnostic.severity.ERROR] = '󰅚 ',
-      [vim.diagnostic.severity.WARN] = '󰀪 ',
-      [vim.diagnostic.severity.HINT] = '󰋽 ',
-      [vim.diagnostic.severity.INFO] = '󰌶 ',
-    },
+  signs = false,
+  virtual_text = {
+    prefix = "",
   },
-  virtual_text = true,
   underline = true,
   update_in_insert = true,
   severity_sort = true,
@@ -287,65 +276,33 @@ vim.diagnostic.config({
 
 vim.lsp.enable({ "clangd", "lua_ls", "ts_ls", "eslint", "stylelint-lsp", "somesass_ls" }) -- https://github.com/neovim/nvim-lspconfig
 
-vim.api.nvim_create_user_command("LspInfo", function()
-  local clients = vim.lsp.get_clients({ bufnr = 0 })
-  if #clients == 0 then
-    print("No LSP clients attached to current buffer")
-  else
-    for _, client in ipairs(clients) do
-      print("LSP: " .. client.name .. " (ID: " .. client.id .. ")")
-    end
-  end
-end, { desc = "Show LSP client info" })
-
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(event)
     local opts = { buffer = event.buf }
 
-    -- Navigation.
     vim.keymap.set("n", "gD", vim.lsp.buf.definition, opts)
     vim.keymap.set("n", "gs", vim.lsp.buf.declaration, opts)
     vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
     vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
-
-    -- Information.
     vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
     vim.keymap.set("n", "<leader>ck", vim.lsp.buf.signature_help, opts)
-
-    -- Code actions.
     vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
     vim.keymap.set("n", "<leader>cr", vim.lsp.buf.rename, opts)
-
-    -- Diagnostics.
     vim.keymap.set("n", "<leader>cd", vim.diagnostic.open_float, opts)
     vim.keymap.set("n", "<leader>cq", vim.diagnostic.setloclist, opts)
   end,
 })
 
--- Autocompletion.
-vim.api.nvim_create_autocmd("LspAttach", {
-  callback = function(ev)
-    local client = vim.lsp.get_client_by_id(ev.data.client_id)
-    if client:supports_method("textDocument/completion") then
-      vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
-    end
-  end,
-})
-vim.cmd("set completeopt+=noselect")
-
--- Basic autocommands.
 local augroup = vim.api.nvim_create_augroup("UserConfig", {})
 
--- Highlight yanked text.
-vim.api.nvim_create_autocmd("TextYankPost", {
+vim.api.nvim_create_autocmd("TextYankPost", { -- Highlight yanked text.
   group = augroup,
   callback = function()
     vim.highlight.on_yank()
   end,
 })
 
--- Return to last edit position when opening files.
-vim.api.nvim_create_autocmd("BufReadPost", {
+vim.api.nvim_create_autocmd("BufReadPost", { -- Return to last edit position when opening files.
   group = augroup,
   callback = function()
     local mark = vim.api.nvim_buf_get_mark(0, '"')
@@ -353,5 +310,12 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     if mark[1] > 0 and mark[1] <= lcount then
       pcall(vim.api.nvim_win_set_cursor, 0, mark)
     end
+  end,
+})
+
+vim.api.nvim_create_autocmd("BufWritePre", { -- Format on save.
+  group = augroup,
+  callback = function()
+    vim.lsp.buf.format({ async = false })
   end,
 })
