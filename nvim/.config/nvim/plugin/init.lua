@@ -32,6 +32,7 @@ end)
 vim.o.complete = ".,o"
 vim.o.completeopt = "fuzzy,menuone,noselect"
 vim.o.autocomplete = true
+vim.o.laststatus = 3
 
 -- Helpers.
 local generate_path = function()
@@ -54,49 +55,33 @@ end
 
 vim.o.path = generate_path()
 
-local oldfiles_list = function()
+local open_oldfiles = function()
+  local cwd = vim.loop.cwd()
   local current_file = vim.fn.expand("%:p")
   local items = {}
-
-  local get_cursor_pos = function(buf)
-    local lnum, col = 1, 1
-
-    local saved = vim.api.nvim_buf_get_mark(buf, '"')
-    if saved[1] > 0 then
-      lnum, col = saved[1], saved[2]
-    end
-
-    return lnum, col
-  end
 
   for _, buffer in ipairs(vim.split(vim.fn.execute(":buffers! t"), "\n")) do
     local bufnr = tonumber(buffer:match("%s*(%d+)"))
     if bufnr then
       local file = vim.api.nvim_buf_get_name(bufnr)
-      if #file > 0 and vim.fn.filereadable(file) == 1 and file ~= current_file then
-        local lnum, col = get_cursor_pos(bufnr)
+      if #file > 0
+          and vim.fn.filereadable(file) == 1
+          and file ~= current_file
+          and vim.startswith(file, cwd) then
+        local lnum, col = 1, 1
+
+        local saved = vim.api.nvim_buf_get_mark(bufnr, '"')
+        if saved[1] > 0 then
+          lnum, col = saved[1], saved[2]
+        end
 
         table.insert(items, { filename = file, lnum = lnum, col = col })
       end
     end
   end
 
-  for _, file in ipairs(vim.v.oldfiles) do
-    if vim.fn.filereadable(file) == 1 and file ~= current_file then
-      local buf = vim.fn.bufadd(file)
-      vim.fn.bufload(buf)
-      local lnum, col = get_cursor_pos(buf)
-
-      table.insert(items, { filename = file, lnum = lnum, col = col })
-    end
-  end
-
-  if #items > 0 then
-    vim.fn.setqflist(items, "r")
-    vim.cmd("copen")
-  else
-    vim.notify("No oldfiles found", vim.log.levels.WARN)
-  end
+  vim.fn.setqflist(items, "r")
+  vim.cmd("copen")
 end
 
 local grep_under_cursor = function()
@@ -109,9 +94,7 @@ local toggle_scratch_buffer = function()
   local cwd = vim.uv.cwd()
   local scratch_dir = vim.fn.stdpath("data") .. "/scratch"
   local scratch_file = scratch_dir .. "/" .. cwd:gsub("^/", ""):gsub("/", "%%") .. ".md"
-
   vim.fn.mkdir(scratch_dir, "p")
-
   local buf
 
   for _, b in ipairs(vim.api.nvim_list_bufs()) do
@@ -168,7 +151,7 @@ vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
 vim.keymap.set("n", "<leader>s", 'q:isilent grep "test" | copen', { desc = "Search via grep" })
 vim.keymap.set("n", "<leader>sw", grep_under_cursor, { desc = "Search current word via grep" })
 vim.keymap.set("n", "<leader><leader>", ":find ", { desc = "Find file" })
-vim.keymap.set("n", "<leader>fr", oldfiles_list, { desc = "Open old files" })
+vim.keymap.set("n", "<leader>fr", open_oldfiles, { desc = "Open old files" })
 vim.keymap.set("n", "<leader>.", toggle_scratch_buffer, { desc = "Open scratch buffer" })
 vim.keymap.set("n", "<leader>gg", '<cmd>G<CR>', { desc = "Open git fugitive" })
 vim.keymap.set("i", "'", "''<left>")
@@ -319,3 +302,10 @@ vim.api.nvim_create_autocmd("BufWritePre", { -- Format on save.
     vim.lsp.buf.format({ async = false })
   end,
 })
+
+vim.api.nvim_create_autocmd( -- Close quickfix menu after selecting a choice.
+  "FileType", {
+    group = augroup,
+    pattern = { "qf" },
+    command = [[nnoremap <buffer> <CR> <CR>:cclose<CR>]]
+  })
