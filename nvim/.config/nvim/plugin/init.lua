@@ -58,26 +58,30 @@ vim.o.path = generate_path()
 local open_oldfiles = function()
   local cwd = vim.loop.cwd()
   local current_file = vim.fn.expand("%:p")
-  local items = {}
+  local items, seen = {}, {}
 
-  for _, buffer in ipairs(vim.split(vim.fn.execute(":buffers! t"), "\n")) do
-    local bufnr = tonumber(buffer:match("%s*(%d+)"))
-    if bufnr then
-      local file = vim.api.nvim_buf_get_name(bufnr)
-      if #file > 0
-          and vim.fn.filereadable(file) == 1
-          and file ~= current_file
-          and vim.startswith(file, cwd) then
-        local lnum, col = 1, 1
+  local function get_cursor_pos(bufnr)
+    local mark = vim.api.nvim_buf_get_mark(bufnr, '"')
+    return (mark[1] > 0) and mark[1] or 0, (mark[2] > 0) and mark[2] or 0
+  end
 
-        local saved = vim.api.nvim_buf_get_mark(bufnr, '"')
-        if saved[1] > 0 then
-          lnum, col = saved[1], saved[2]
-        end
+  local function add_file(file, bufnr)
+    if not file or file == "" or file == current_file or seen[file] then return end
+    if vim.fn.filereadable(file) == 0 or not vim.startswith(file, cwd) then return end
+    seen[file] = true
+    bufnr = bufnr or vim.fn.bufadd(file)
+    vim.fn.bufload(bufnr)
+    local lnum, col = get_cursor_pos(bufnr)
+    items[#items + 1] = { filename = file, lnum = lnum, col = col }
+  end
 
-        table.insert(items, { filename = file, lnum = lnum, col = col })
-      end
-    end
+  for _, line in ipairs(vim.split(vim.fn.execute(":buffers! t"), "\n")) do
+    local bufnr = tonumber(line:match("%s*(%d+)"))
+    if bufnr then add_file(vim.api.nvim_buf_get_name(bufnr), bufnr) end
+  end
+
+  for _, file in ipairs(vim.v.oldfiles) do
+    add_file(file)
   end
 
   vim.fn.setqflist(items, "r")
