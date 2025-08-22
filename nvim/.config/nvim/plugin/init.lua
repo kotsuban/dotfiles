@@ -154,11 +154,6 @@ vim.keymap.set("n", "<leader><leader>", ":find ", { desc = "Find file" })
 vim.keymap.set("n", "<leader>fr", open_oldfiles, { desc = "Open old files" })
 vim.keymap.set("n", "<leader>.", toggle_scratch_buffer, { desc = "Open scratch buffer" })
 vim.keymap.set("n", "<leader>gg", '<cmd>G<CR>', { desc = "Open git fugitive" })
-vim.keymap.set("i", "'", "''<left>")
-vim.keymap.set("i", '"', '""<left>')
-vim.keymap.set("i", "(", "()<left>")
-vim.keymap.set("i", "[", "[]<left>")
-vim.keymap.set("i", "{", "{}<left>")
 vim.keymap.set(
   "v",
   "<leader>r",
