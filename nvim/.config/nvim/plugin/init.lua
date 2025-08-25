@@ -139,7 +139,44 @@ local toggle_scratch = function()
   vim.api.nvim_win_set_buf(0, buf)
 end
 
+local terminal = {
+  win = nil,
+  buf = nil,
+  is_open = false
+}
+
+local toogle_terminal = function()
+  if terminal.is_open then
+    vim.cmd("b#")
+    terminal.is_open = false
+    return
+  end
+
+  if not terminal.buf or not vim.api.nvim_buf_is_valid(terminal.buf) then
+    terminal.buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_set_option(terminal.buf, 'bufhidden', 'hide')
+  end
+
+  vim.api.nvim_win_set_buf(0, terminal.buf)
+
+  local has_terminal = false
+  local lines = vim.api.nvim_buf_get_lines(terminal.buf, 0, -1, false)
+  for _, line in ipairs(lines) do
+    if line ~= "" then
+      has_terminal = true
+      break
+    end
+  end
+
+  if not has_terminal then
+    vim.cmd.term()
+  end
+
+  terminal.is_open = true
+end
+
 -- Keymaps.
+vim.keymap.set({ "n", "t" }, ",,", toogle_terminal, { desc = "Toggle floating terminal" })
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Exit from search mode" })
 vim.keymap.set({ "n", "v", "i" }, "<Esc><Esc>", ":silent! close<CR>", { desc = "Close current window" })
 vim.keymap.set("v", "v", "g_", { noremap = true, desc = "Visual to end of line (non-newline)" })
