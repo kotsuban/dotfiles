@@ -93,7 +93,7 @@ local grep_under_cursor = function()
   vim.cmd('silent grep "' .. word .. '" | copen')
 end
 
-local toggle_scratch_buffer = function()
+local toggle_scratch = function()
   local uv = vim.uv or vim.loop
   local cwd = vim.uv.cwd()
   local scratch_dir = vim.fn.stdpath("data") .. "/scratch"
@@ -156,7 +156,7 @@ vim.keymap.set("n", "<leader>s", 'q:isilent grep "test" | copen', { desc = "Sear
 vim.keymap.set("n", "<leader>sw", grep_under_cursor, { desc = "Search current word via grep" })
 vim.keymap.set("n", "<leader><leader>", ":find ", { desc = "Find file" })
 vim.keymap.set("n", "<leader>fr", open_oldfiles, { desc = "Open old files" })
-vim.keymap.set("n", "<leader>.", toggle_scratch_buffer, { desc = "Open scratch buffer" })
+vim.keymap.set("n", "<leader>.", toggle_scratch, { desc = "Open scratch buffer" })
 vim.keymap.set("n", "<leader>gg", '<cmd>G<CR>', { desc = "Open git fugitive" })
 vim.keymap.set(
   "v",
