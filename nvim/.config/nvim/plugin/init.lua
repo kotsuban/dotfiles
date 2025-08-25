@@ -110,11 +110,10 @@ local toggle_scratch = function()
 
   if not buf then
     buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_set_option(buf, 'bufhidden', 'hide')
     vim.api.nvim_buf_set_name(buf, cwd)
     vim.bo[buf].filetype = "markdown"
-    vim.bo[buf].buftype = "nofile"
     vim.bo[buf].swapfile = false
-    vim.bo[buf].bufhidden = "wipe"
 
     if uv.fs_stat(scratch_file) then
       local lines = vim.fn.readfile(scratch_file)
