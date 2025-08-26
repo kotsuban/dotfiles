@@ -110,9 +110,9 @@ local toggle_scratch = function()
 
   if not buf then
     buf = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_buf_set_option(buf, 'bufhidden', 'hide')
     vim.api.nvim_buf_set_name(buf, cwd)
     vim.bo[buf].filetype = "markdown"
+    vim.bo[buf].bufhidden = "hide"
     vim.bo[buf].swapfile = false
 
     if uv.fs_stat(scratch_file) then
@@ -154,7 +154,7 @@ local toogle_terminal = function()
 
   if not terminal.buf or not vim.api.nvim_buf_is_valid(terminal.buf) then
     terminal.buf = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_buf_set_option(terminal.buf, 'bufhidden', 'hide')
+    vim.bo[terminal.buf].bufhidden = 'hide'
   end
 
   vim.api.nvim_win_set_buf(0, terminal.buf)
