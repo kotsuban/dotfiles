@@ -176,9 +176,10 @@ local toogle_terminal = function()
 end
 
 -- Keymaps.
-vim.keymap.set({ "n", "t" }, ",,", toogle_terminal, { desc = "Toggle floating terminal" })
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Exit from search mode" })
 vim.keymap.set({ "n", "v", "i" }, "<Esc><Esc>", ":silent! close<CR>", { desc = "Close current window" })
+vim.keymap.set({ "n", "t" }, ",,", toogle_terminal, { desc = "Toggle terminal buffer" })
+vim.keymap.set("n", "..", toggle_scratch, { desc = "Toggle scratch buffer" })
 vim.keymap.set("v", "v", "g_", { noremap = true, desc = "Visual to end of line (non-newline)" })
 vim.keymap.set("n", "<leader>`", "<C-^>", { noremap = true, desc = "Swap with previous file" })
 vim.keymap.set("n", "<leader>o", ":update<CR> :source<CR>", { desc = "Reload nvim config" })
@@ -192,7 +193,6 @@ vim.keymap.set("n", "<leader>s", 'q:isilent grep "test" | copen', { desc = "Sear
 vim.keymap.set("n", "<leader>sw", grep_under_cursor, { desc = "Search current word via grep" })
 vim.keymap.set("n", "<leader><leader>", ":find ", { desc = "Find file" })
 vim.keymap.set("n", "<leader>fr", open_oldfiles, { desc = "Open old files" })
-vim.keymap.set("n", "<leader>.", toggle_scratch, { desc = "Open scratch buffer" })
 vim.keymap.set("n", "<leader>gg", '<cmd>G<CR>', { desc = "Open git fugitive" })
 
 -- Statusline.
