@@ -194,12 +194,6 @@ vim.keymap.set("n", "<leader><leader>", ":find ", { desc = "Find file" })
 vim.keymap.set("n", "<leader>fr", open_oldfiles, { desc = "Open old files" })
 vim.keymap.set("n", "<leader>.", toggle_scratch, { desc = "Open scratch buffer" })
 vim.keymap.set("n", "<leader>gg", '<cmd>G<CR>', { desc = "Open git fugitive" })
-vim.keymap.set(
-  "v",
-  "<leader>r",
-  '"hy:%s/<C-r>h//g<left><left>',
-  { desc = "Replace all instances of highlighted words" }
-)
 
 -- Statusline.
 local colors = require("catppuccin.palettes").get_palette "mocha"
