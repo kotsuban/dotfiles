@@ -176,10 +176,9 @@ local toogle_terminal = function()
 end
 
 -- Keymaps.
-vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Exit from search mode" })
-vim.keymap.set({ "n", "v", "i" }, "<Esc><Esc>", ":silent! close<CR>", { desc = "Close current window" })
 vim.keymap.set({ "n", "t" }, ",,", toogle_terminal, { desc = "Toggle terminal buffer" })
 vim.keymap.set("n", "..", toggle_scratch, { desc = "Toggle scratch buffer" })
+vim.keymap.set({ "n" }, "<Esc><Esc>", ":silent! close<CR>", { desc = "Close current window" })
 vim.keymap.set("v", "v", "g_", { noremap = true, desc = "Visual to end of line (non-newline)" })
 vim.keymap.set("n", "<leader>`", "<C-^>", { noremap = true, desc = "Swap with previous file" })
 vim.keymap.set("n", "<leader>o", ":update<CR> :source<CR>", { desc = "Reload nvim config" })
