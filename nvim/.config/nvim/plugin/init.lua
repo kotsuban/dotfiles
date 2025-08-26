@@ -189,7 +189,8 @@ vim.keymap.set("n", "<leader>sv", ":vsplit<CR>", { desc = "Split window vertical
 vim.keymap.set("n", "<leader>sh", ":split<CR>", { desc = "Split window horizontally" })
 vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
 vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
-vim.keymap.set("n", "<leader>s", 'q:isilent grep "test" | copen', { desc = "Search via grep" })
+vim.keymap.set("n", "<leader>ss", 'q:isilent grep  |cope<left><left><left><left><left><left>',
+  { desc = "Search via grep" })
 vim.keymap.set("n", "<leader>sw", grep_under_cursor, { desc = "Search current word via grep" })
 vim.keymap.set("n", "<leader><leader>", ":find ", { desc = "Find file" })
 vim.keymap.set("n", "<leader>fr", open_oldfiles, { desc = "Open old files" })
