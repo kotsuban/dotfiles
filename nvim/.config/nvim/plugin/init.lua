@@ -26,13 +26,13 @@ vim.o.jumpoptions = "view"
 vim.o.linebreak = true
 vim.o.confirm = true
 vim.o.grepprg = "rg --vimgrep --no-heading --smart-case"
-vim.schedule(function()
-  vim.o.clipboard = "unnamedplus"
-end)
 vim.o.complete = ".,o"
 vim.o.completeopt = "fuzzy,menuone,noselect"
 vim.o.autocomplete = true
 vim.o.laststatus = 3
+vim.schedule(function()
+  vim.o.clipboard = "unnamedplus"
+end)
 
 -- Helpers.
 local generate_path = function()
