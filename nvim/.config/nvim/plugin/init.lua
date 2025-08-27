@@ -1,13 +1,15 @@
 vim.g.mapleader = " "
-vim.o.number = true
 vim.o.relativenumber = true
+vim.o.number = true
+vim.o.statuscolumn = '%C%s%=%{v:relnum?v:relnum:v:lnum} '
+vim.wo.cursorline = true
 vim.o.undofile = true
 vim.o.ignorecase = true
 vim.o.winborder = "rounded"
 vim.o.smartcase = true
 vim.o.smartindent = true
 vim.o.signcolumn = "yes"
-vim.o.updatetime = 500
+vim.o.updatetime = 250
 vim.o.wildmode = "longest:full,full"
 vim.o.wildignore = "*/node_modules/*,*/dist/*,*/static/*,*/__pycache__/*,*.log,*.git,*.venv,*.cache"
 vim.o.splitright = true
