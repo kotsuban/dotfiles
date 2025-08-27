@@ -348,3 +348,37 @@ vim.api.nvim_create_autocmd( -- Close quickfix menu after selecting a choice.
     pattern = { "qf" },
     command = [[nnoremap <buffer> <CR> <CR>:cclose<CR>]]
   })
+
+local qf_ns = vim.api.nvim_create_namespace("quickfix_diagnostics")
+
+local function qf_to_diagnostics()
+  local qflist = vim.fn.getqflist({ items = 0 }).items
+  local diags_by_buf = {}
+
+  for _, item in ipairs(qflist) do
+    if item.valid == 1 and item.bufnr > 0 then
+      local diag = {
+        lnum = item.lnum - 1, -- 0-based
+        col = item.col - 1,   -- 0-based
+        message = item.text,
+        severity = (item.type == "E" or item.type == "error")
+            and vim.diagnostic.severity.ERROR
+            or vim.diagnostic.severity.WARN,
+        source = "make",
+      }
+      diags_by_buf[item.bufnr] = diags_by_buf[item.bufnr] or {}
+      table.insert(diags_by_buf[item.bufnr], diag)
+    end
+  end
+
+  vim.diagnostic.reset(qf_ns)
+  for bufnr, diagnostics in pairs(diags_by_buf) do
+    vim.diagnostic.set(qf_ns, bufnr, diagnostics, {})
+  end
+end
+
+vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+  group = augroup,
+  pattern = { "make" },
+  callback = qf_to_diagnostics,
+})
