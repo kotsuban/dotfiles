@@ -141,44 +141,18 @@ local toggle_scratch = function()
   vim.api.nvim_win_set_buf(0, buf)
 end
 
-local terminal = {
-  win = nil,
-  buf = nil,
-  is_open = false
-}
+local toggle_quickfix = function()
+  local is_open = vim.iter(vim.fn.getwininfo()):any(function(win) return win.quickfix == 1 end)
 
-local toogle_terminal = function()
-  if terminal.is_open then
-    vim.cmd("b#")
-    terminal.is_open = false
-    return
+  if is_open then
+    vim.cmd("cclose")
+  else
+    vim.cmd("copen")
   end
-
-  if not terminal.buf or not vim.api.nvim_buf_is_valid(terminal.buf) then
-    terminal.buf = vim.api.nvim_create_buf(false, true)
-    vim.bo[terminal.buf].bufhidden = 'hide'
-  end
-
-  vim.api.nvim_win_set_buf(0, terminal.buf)
-
-  local has_terminal = false
-  local lines = vim.api.nvim_buf_get_lines(terminal.buf, 0, -1, false)
-  for _, line in ipairs(lines) do
-    if line ~= "" then
-      has_terminal = true
-      break
-    end
-  end
-
-  if not has_terminal then
-    vim.cmd.term()
-  end
-
-  terminal.is_open = true
 end
 
 -- Keymaps.
-vim.keymap.set({ "n", "t" }, ",,", toogle_terminal, { desc = "Toggle terminal buffer" })
+vim.keymap.set("n", "<leader>q", toggle_quickfix, { desc = "Toggle quickfix buffer" })
 vim.keymap.set("n", "..", toggle_scratch, { desc = "Toggle scratch buffer" })
 vim.keymap.set({ "n" }, "<Esc><Esc>", ":silent! close<CR>", { desc = "Close current window" })
 vim.keymap.set("v", "v", "g_", { noremap = true, desc = "Visual to end of line (non-newline)" })
@@ -358,8 +332,8 @@ local function qf_to_diagnostics()
   for _, item in ipairs(qflist) do
     if item.valid == 1 and item.bufnr > 0 then
       local diag = {
-        lnum = item.lnum - 1, -- 0-based
-        col = item.col - 1,   -- 0-based
+        lnum = item.lnum - 1,
+        col = item.col - 1,
         message = item.text,
         severity = (item.type == "E" or item.type == "error")
             and vim.diagnostic.severity.ERROR
