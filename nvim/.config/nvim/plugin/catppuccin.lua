@@ -1,5 +1,7 @@
 vim.pack.add({ "https://github.com/catppuccin/nvim" }, { load = true })
+vim.pack.add({ "https://github.com/mason-org/mason.nvim" })
 
+require("mason").setup()
 require("catppuccin").setup({
   flavour = "mocha",
   transparent_background = true,
