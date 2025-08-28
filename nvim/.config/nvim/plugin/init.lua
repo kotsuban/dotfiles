@@ -36,7 +36,6 @@ vim.schedule(function()
   vim.o.clipboard = "unnamedplus"
 end)
 
--- Helpers.
 local generate_path = function()
   local ignore = { "node_modules", "dist", "build", ".git", ".cache", "static", "__pycache__", ".venv" }
 
@@ -95,52 +94,6 @@ local grep_under_cursor = function()
   vim.cmd('silent grep "' .. word .. '" | copen')
 end
 
-local toggle_scratch = function()
-  local uv = vim.uv or vim.loop
-  local cwd = vim.uv.cwd()
-  local scratch_dir = vim.fn.stdpath("data") .. "/scratch"
-  local scratch_file = scratch_dir .. "/" .. cwd:gsub("^/", ""):gsub("/", "%%") .. ".md"
-  vim.fn.mkdir(scratch_dir, "p")
-  local buf
-
-  for _, b in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.api.nvim_buf_is_valid(b) and vim.api.nvim_buf_get_name(b) == cwd then
-      buf = b
-      break
-    end
-  end
-
-  if not buf then
-    buf = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_buf_set_name(buf, cwd)
-    vim.bo[buf].filetype = "markdown"
-    vim.bo[buf].bufhidden = "hide"
-    vim.bo[buf].swapfile = false
-
-    if uv.fs_stat(scratch_file) then
-      local lines = vim.fn.readfile(scratch_file)
-      vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-    end
-
-    local augroup = vim.api.nvim_create_augroup("scratch_autosave_" .. buf, { clear = true })
-    vim.api.nvim_create_autocmd({ "BufLeave", "BufHidden" }, {
-      group = augroup,
-      buffer = buf,
-      callback = function()
-        local content = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-        vim.fn.writefile(content, scratch_file)
-      end,
-    })
-  end
-
-  if vim.api.nvim_get_current_buf() == buf then
-    vim.cmd("b#")
-    return
-  end
-
-  vim.api.nvim_win_set_buf(0, buf)
-end
-
 local toggle_quickfix = function()
   local is_open = vim.iter(vim.fn.getwininfo()):any(function(win) return win.quickfix == 1 end)
 
@@ -151,9 +104,7 @@ local toggle_quickfix = function()
   end
 end
 
--- Keymaps.
 vim.keymap.set("n", "<leader>q", toggle_quickfix, { desc = "Toggle quickfix buffer" })
-vim.keymap.set("n", "..", toggle_scratch, { desc = "Toggle scratch buffer" })
 vim.keymap.set({ "n" }, "<Esc><Esc>", ":silent! close<CR>", { desc = "Close current window" })
 vim.keymap.set("v", "v", "g_", { noremap = true, desc = "Visual to end of line (non-newline)" })
 vim.keymap.set("n", "<leader>`", "<C-^>", { noremap = true, desc = "Swap with previous file" })
@@ -179,7 +130,6 @@ vim.keymap.set('n', '<M-j>', '<cmd>resize -2<cr>', { desc = 'Decrease Window Hei
 vim.keymap.set('n', '<M-h>', '<cmd>vertical resize -2<cr>', { desc = 'Decrease Window Width' })
 vim.keymap.set('n', '<M-l>', '<cmd>vertical resize +2<cr>', { desc = 'Increase Window Width' })
 
--- Statusline.
 local colors = require("catppuccin.palettes").get_palette "mocha"
 
 vim.api.nvim_set_hl(0, "StatusLineBlue", { fg = colors.blue, bold = true })
@@ -251,7 +201,6 @@ vim.o.statusline = table.concat {
   "%{v:lua.branch()} ",
 }
 
--- Lsp.
 vim.diagnostic.config({
   signs = false,
   virtual_text = {
@@ -289,7 +238,41 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
+local qf_ns = vim.api.nvim_create_namespace("quickfix_diagnostics")
+
+local function qf_to_diagnostics()
+  local qflist = vim.fn.getqflist({ items = 0 }).items
+  local diags_by_buf = {}
+
+  for _, item in ipairs(qflist) do
+    if item.valid == 1 and item.bufnr > 0 then
+      local diag = {
+        lnum = item.lnum - 1,
+        col = item.col - 1,
+        message = item.text,
+        severity = (item.type == "E" or item.type == "error")
+            and vim.diagnostic.severity.ERROR
+            or vim.diagnostic.severity.WARN,
+        source = "make",
+      }
+      diags_by_buf[item.bufnr] = diags_by_buf[item.bufnr] or {}
+      table.insert(diags_by_buf[item.bufnr], diag)
+    end
+  end
+
+  vim.diagnostic.reset(qf_ns)
+  for bufnr, diagnostics in pairs(diags_by_buf) do
+    vim.diagnostic.set(qf_ns, bufnr, diagnostics, {})
+  end
+end
+
 local augroup = vim.api.nvim_create_augroup("UserConfig", {})
+
+vim.api.nvim_create_autocmd("QuickFixCmdPost", { -- Populate LSP diagnostics with errors from quickfix list.
+  group = augroup,
+  pattern = { "make" },
+  callback = qf_to_diagnostics,
+})
 
 vim.api.nvim_create_autocmd("TextYankPost", { -- Highlight yanked text.
   group = augroup,
@@ -322,37 +305,3 @@ vim.api.nvim_create_autocmd( -- Close quickfix menu after selecting a choice.
     pattern = { "qf" },
     command = [[nnoremap <buffer> <CR> <CR>:cclose<CR>]]
   })
-
-local qf_ns = vim.api.nvim_create_namespace("quickfix_diagnostics")
-
-local function qf_to_diagnostics()
-  local qflist = vim.fn.getqflist({ items = 0 }).items
-  local diags_by_buf = {}
-
-  for _, item in ipairs(qflist) do
-    if item.valid == 1 and item.bufnr > 0 then
-      local diag = {
-        lnum = item.lnum - 1,
-        col = item.col - 1,
-        message = item.text,
-        severity = (item.type == "E" or item.type == "error")
-            and vim.diagnostic.severity.ERROR
-            or vim.diagnostic.severity.WARN,
-        source = "make",
-      }
-      diags_by_buf[item.bufnr] = diags_by_buf[item.bufnr] or {}
-      table.insert(diags_by_buf[item.bufnr], diag)
-    end
-  end
-
-  vim.diagnostic.reset(qf_ns)
-  for bufnr, diagnostics in pairs(diags_by_buf) do
-    vim.diagnostic.set(qf_ns, bufnr, diagnostics, {})
-  end
-end
-
-vim.api.nvim_create_autocmd("QuickFixCmdPost", {
-  group = augroup,
-  pattern = { "make" },
-  callback = qf_to_diagnostics,
-})
