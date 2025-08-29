@@ -201,40 +201,38 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
-local qf_ns = vim.api.nvim_create_namespace("quickfix_diagnostics")
-
-local function qf_to_diagnostics()
-  local qflist = vim.fn.getqflist({ items = 0 }).items
-  local diags_by_buf = {}
-
-  for _, item in ipairs(qflist) do
-    if item.valid == 1 and item.bufnr > 0 then
-      local diag = {
-        lnum = item.lnum - 1,
-        col = item.col - 1,
-        message = item.text,
-        severity = (item.type == "E" or item.type == "error")
-            and vim.diagnostic.severity.ERROR
-            or vim.diagnostic.severity.WARN,
-        source = "make",
-      }
-      diags_by_buf[item.bufnr] = diags_by_buf[item.bufnr] or {}
-      table.insert(diags_by_buf[item.bufnr], diag)
-    end
-  end
-
-  vim.diagnostic.reset(qf_ns)
-  for bufnr, diagnostics in pairs(diags_by_buf) do
-    vim.diagnostic.set(qf_ns, bufnr, diagnostics, {})
-  end
-end
 
 local augroup = vim.api.nvim_create_augroup("UserConfig", {})
 
+local qf_ns = vim.api.nvim_create_namespace("quickfix_diagnostics")
 vim.api.nvim_create_autocmd("QuickFixCmdPost", { -- Populate LSP diagnostics with errors from quickfix list.
   group = augroup,
   pattern = { "make" },
-  callback = qf_to_diagnostics,
+  callback = function()
+    local qflist = vim.fn.getqflist({ items = 0 }).items
+    local diags_by_buf = {}
+
+    for _, item in ipairs(qflist) do
+      if item.valid == 1 and item.bufnr > 0 then
+        local diag = {
+          lnum = item.lnum - 1,
+          col = item.col - 1,
+          message = item.text,
+          severity = (item.type == "E" or item.type == "error")
+              and vim.diagnostic.severity.ERROR
+              or vim.diagnostic.severity.WARN,
+          source = "make",
+        }
+        diags_by_buf[item.bufnr] = diags_by_buf[item.bufnr] or {}
+        table.insert(diags_by_buf[item.bufnr], diag)
+      end
+    end
+
+    vim.diagnostic.reset(qf_ns)
+    for bufnr, diagnostics in pairs(diags_by_buf) do
+      vim.diagnostic.set(qf_ns, bufnr, diagnostics, {})
+    end
+  end,
 })
 
 vim.api.nvim_create_autocmd("TextYankPost", { -- Highlight yanked text.
