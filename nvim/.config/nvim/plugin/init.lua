@@ -8,7 +8,6 @@ vim.o.ignorecase = true
 vim.o.winborder = "rounded"
 vim.o.smartcase = true
 vim.o.smartindent = true
-vim.o.signcolumn = "yes"
 vim.o.updatetime = 250
 vim.o.wildignore = "*/node_modules/*,*/dist/*,*/build/*,*.git,*.cache,*/static/*,*/__pycache__/*,*.venv"
 vim.o.splitright = true
