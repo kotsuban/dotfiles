@@ -55,39 +55,6 @@ end
 
 vim.o.path = generate_path()
 
-local open_oldfiles = function()
-  local cwd = vim.loop.cwd()
-  local current_file = vim.fn.expand("%:p")
-  local items, seen = {}, {}
-
-  local function get_cursor_pos(bufnr)
-    local mark = vim.api.nvim_buf_get_mark(bufnr, '"')
-    return (mark[1] > 0) and mark[1] or 0, (mark[2] > 0) and mark[2] or 0
-  end
-
-  local function add_file(file, bufnr)
-    if not file or file == "" or file == current_file or seen[file] then return end
-    if vim.fn.filereadable(file) == 0 or not vim.startswith(file, cwd) then return end
-    seen[file] = true
-    bufnr = bufnr or vim.fn.bufadd(file)
-    vim.fn.bufload(bufnr)
-    local lnum, col = get_cursor_pos(bufnr)
-    items[#items + 1] = { filename = file, lnum = lnum, col = col }
-  end
-
-  for _, line in ipairs(vim.split(vim.fn.execute(":buffers! t"), "\n")) do
-    local bufnr = tonumber(line:match("%s*(%d+)"))
-    if bufnr then add_file(vim.api.nvim_buf_get_name(bufnr), bufnr) end
-  end
-
-  for _, file in ipairs(vim.v.oldfiles) do
-    add_file(file)
-  end
-
-  vim.fn.setqflist(items, "r")
-  vim.cmd("copen")
-end
-
 local grep_under_cursor = function()
   local word = vim.fn.expand("<cword>")
   vim.cmd('silent grep "' .. word .. '" | copen')
@@ -118,7 +85,7 @@ vim.keymap.set("n", "<leader>ss", 'q:isilent grep  |cope<left><left><left><left>
   { desc = "Search via grep" })
 vim.keymap.set("n", "<leader>sw", grep_under_cursor, { desc = "Search current word via grep" })
 vim.keymap.set("n", "<leader><leader>", ":find ", { desc = "Find file" })
-vim.keymap.set("n", "<leader>fr", open_oldfiles, { desc = "Open old files" })
+vim.keymap.set("n", "<leader>fr", ":b ", { desc = "Open old files" })
 vim.keymap.set("n", "<leader>gg", '<cmd>G<CR>', { desc = "Open git fugitive" })
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
@@ -130,7 +97,6 @@ vim.keymap.set('n', '<M-h>', '<cmd>vertical resize -2<cr>', { desc = 'Decrease W
 vim.keymap.set('n', '<M-l>', '<cmd>vertical resize +2<cr>', { desc = 'Increase Window Width' })
 
 local colors = require("catppuccin.palettes").get_palette "mocha"
-
 vim.api.nvim_set_hl(0, "StatusLineBlue", { fg = colors.blue, bold = true })
 vim.api.nvim_set_hl(0, "StatusLineMauve", { fg = colors.mauve, bold = true })
 vim.api.nvim_set_hl(0, "StatusLineWhite", { fg = colors.white, bold = false })
