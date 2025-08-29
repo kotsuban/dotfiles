@@ -2,7 +2,6 @@ vim.g.mapleader = " "
 vim.o.relativenumber = true
 vim.o.number = true
 vim.o.statuscolumn = '%C%s%=%{v:relnum?v:relnum:v:lnum} '
-vim.wo.cursorline = true
 vim.o.undofile = true
 vim.o.ignorecase = true
 vim.o.winborder = "rounded"
