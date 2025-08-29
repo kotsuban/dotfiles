@@ -10,8 +10,7 @@ vim.o.smartcase = true
 vim.o.smartindent = true
 vim.o.signcolumn = "yes"
 vim.o.updatetime = 250
-vim.o.wildmode = "longest:full,full"
-vim.o.wildignore = "*/node_modules/*,*/dist/*,*/static/*,*/__pycache__/*,*.log,*.git,*.venv,*.cache"
+vim.o.wildignore = "*/node_modules/*,*/dist/*,*/build/*,*.git,*.cache,*/static/*,*/__pycache__/*,*.venv"
 vim.o.splitright = true
 vim.o.splitbelow = true
 vim.o.splitkeep = "screen"
@@ -305,3 +304,13 @@ vim.api.nvim_create_autocmd( -- Close quickfix menu after selecting a choice.
     pattern = { "qf" },
     command = [[nnoremap <buffer> <CR> <CR>:cclose<CR>]]
   })
+
+vim.api.nvim_create_autocmd({ 'CmdlineChanged' }, { -- Mini fuzzy finder.
+  pattern = { '*' },
+  group = augroup,
+  callback = function()
+    vim.o.wildmenu = true
+    vim.o.wildmode = 'noselect:lastused,full'
+    vim.fn.wildtrigger()
+  end
+})
