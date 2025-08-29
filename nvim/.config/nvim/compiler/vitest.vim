@@ -1,8 +1,3 @@
-" Vim compiler file
-" Compiler:	Vitest
-" Maintainer:	Anthony Kotsuban <anthonykotsuban@gmail.com>
-" Last Change:	2025 Aug 27
-
 if exists("current_compiler")
   finish
 endif
