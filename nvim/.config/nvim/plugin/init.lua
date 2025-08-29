@@ -269,12 +269,22 @@ vim.api.nvim_create_autocmd( -- Close quickfix menu after selecting a choice.
     command = [[nnoremap <buffer> <CR> <CR>:cclose<CR>]]
   })
 
-vim.api.nvim_create_autocmd({ 'CmdlineChanged' }, { -- Mini fuzzy finder.
+vim.api.nvim_create_autocmd("CmdlineChanged", { -- Mini fuzzy finder.
   pattern = { '*' },
   group = augroup,
-  callback = function()
-    vim.o.wildmenu = true
-    vim.o.wildmode = 'noselect:lastused,full'
-    vim.fn.wildtrigger()
+  callback = function(ev)
+    local function is_enabled()
+      local cmd = vim.fn.split(vim.fn.getcmdline(), ' ')[1]
+      return cmd == 'find' or cmd == 'buffer' or cmd == 'help'
+    end
+
+    if ev.event == 'CmdlineChanged' and is_enabled() then
+      vim.opt.wildmode = 'noselect:lastused,full'
+      vim.fn.wildtrigger()
+    end
+
+    if ev.event == 'CmdlineLeave' then
+      vim.opt.wildmode = 'full'
+    end
   end
 })
