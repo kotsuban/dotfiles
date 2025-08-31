@@ -8,6 +8,7 @@ vim.o.winborder = "rounded"
 vim.o.smartcase = true
 vim.o.smartindent = true
 vim.o.updatetime = 250
+vim.opt.wildmode = 'full'
 vim.o.wildignore = "*/node_modules/*,*/dist/*,*/build/*,*.git,*.cache,*/static/*,*/__pycache__/*,*.venv"
 vim.o.splitright = true
 vim.o.splitbelow = true
@@ -276,13 +277,13 @@ vim.api.nvim_create_autocmd("CmdlineChanged", { -- Mini fuzzy finder.
       return cmd == 'find' or cmd == 'buffer' or cmd == 'help'
     end
 
+    if ev.event == 'CmdlineChanged' then
+      vim.opt.wildmode = 'full'
+    end
+
     if ev.event == 'CmdlineChanged' and is_enabled() then
       vim.opt.wildmode = 'noselect:lastused,full'
       vim.fn.wildtrigger()
-    end
-
-    if ev.event == 'CmdlineLeave' then
-      vim.opt.wildmode = 'full'
     end
   end
 })
