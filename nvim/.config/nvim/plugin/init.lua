@@ -30,29 +30,34 @@ vim.o.complete = ".,o"
 vim.o.completeopt = "fuzzy,menuone,noselect"
 vim.o.autocomplete = true
 vim.o.laststatus = 3
-vim.schedule(function()
-  vim.o.clipboard = "unnamedplus"
-end)
+vim.schedule(function() vim.o.clipboard = "unnamedplus" end)
 
-local generate_path = function()
-  local ignore = { "node_modules", "dist", "build", ".git", ".cache", "static", "__pycache__", ".venv" }
+function _G.find(cmdarg)
+  local input = tostring(cmdarg or "")
+  local base_dir = nil
+  local needle = input
 
-  local handle = vim.loop.fs_scandir(vim.loop.cwd())
-  local dirs = { ".,," }
-  if handle then
-    while true do
-      local name, t = vim.loop.fs_scandir_next(handle)
-      if not name then break end
-      if t == "directory" and not vim.tbl_contains(ignore, name) then
-        table.insert(dirs, name .. "/**")
-      end
+  if vim.startswith(input, "/") or vim.startswith(input, "~") then
+    local expanded = vim.fn.expand(input)
+    local stat = vim.uv.fs_stat(expanded)
+
+    if input:sub(-1) == "/" or (stat and stat.type == "directory") then
+      base_dir = expanded
+      needle = ""
+    else
+      base_dir = vim.fn.fnamemodify(expanded, ":h")
+      needle = vim.fn.fnamemodify(expanded, ":t")
     end
   end
 
-  return table.concat(dirs, ",")
+  local output = base_dir
+      and vim.fn.systemlist("fd -d=1 --color=never --type f --type d --exclude .git . " .. vim.fn.shellescape(base_dir))
+      or vim.fn.systemlist "fd --hidden --color=never --type f --exclude .git"
+
+  return needle == "" and output or vim.fn.matchfuzzy(output, needle)
 end
 
-vim.o.path = generate_path()
+vim.o.findfunc = "v:lua.find"
 
 local grep_under_cursor = function()
   local word = vim.fn.expand("<cword>")
