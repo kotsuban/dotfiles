@@ -60,18 +60,12 @@ end
 vim.o.findfunc = "v:lua.find"
 
 local grep_under_cursor = function()
-  local word = vim.fn.expand("<cword>")
-  vim.cmd('silent grep "' .. word .. '" | copen')
+  vim.cmd('silent grep "' .. vim.fn.expand("<cword>") .. '" | copen')
 end
 
 local toggle_quickfix = function()
   local is_open = vim.iter(vim.fn.getwininfo()):any(function(win) return win.quickfix == 1 end)
-
-  if is_open then
-    vim.cmd("cclose")
-  else
-    vim.cmd("copen")
-  end
+  return is_open and vim.cmd("cclose") or vim.cmd("copen")
 end
 
 vim.keymap.set("n", "<leader>q", toggle_quickfix, { desc = "Toggle quickfix buffer" })
@@ -88,7 +82,7 @@ vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
 vim.keymap.set("n", "<leader>s", 'q:isilent grep  |cope<left><left><left><left><left><left>',
   { desc = "Search via grep" })
 vim.keymap.set("n", "<leader>w", grep_under_cursor, { desc = "Search current word via grep" })
-vim.keymap.set("n", "<leader>f", ":find *", { desc = "Find file" })
+vim.keymap.set("n", "<leader>f", ":find ", { desc = "Find file" })
 vim.keymap.set("n", "<leader>b", ":buffer ", { desc = "Open buffers" })
 vim.keymap.set("n", "<leader>g", '<cmd>G<CR>', { desc = "Open git fugitive" })
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
@@ -207,7 +201,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
-
 local augroup = vim.api.nvim_create_augroup("UserConfig", {})
 
 local qf_ns = vim.api.nvim_create_namespace("quickfix_diagnostics")
@@ -266,12 +259,11 @@ vim.api.nvim_create_autocmd("BufWritePre", { -- Format on save.
   end,
 })
 
-vim.api.nvim_create_autocmd( -- Close quickfix menu after selecting a choice.
-  "FileType", {
-    group = augroup,
-    pattern = { "qf" },
-    command = [[nnoremap <buffer> <CR> <CR>:cclose<CR>]]
-  })
+vim.api.nvim_create_autocmd("FileType", { -- Close quickfix menu after selecting a choice.
+  group = augroup,
+  pattern = { "qf" },
+  command = [[nnoremap <buffer> <CR> <CR>:cclose<CR>]]
+})
 
 vim.api.nvim_create_autocmd("CmdlineChanged", { -- Mini fuzzy finder.
   pattern = { '*' },
