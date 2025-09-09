@@ -119,7 +119,7 @@ _G.diff = function(symbol, type)
   return gitsigns[type] and gitsigns[type] > 0 and (symbol .. gitsigns[type] .. " ") or ""
 end
 _G.branch = function()
-  local git_dir = vim.fn.finddir(".git", ".;")
+  local git_dir = vim.fs.find(".git", { upward = true, type = "directory" })[1]
   if git_dir == "" then
     return ""
   end
