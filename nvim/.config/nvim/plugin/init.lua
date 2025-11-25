@@ -78,7 +78,7 @@ vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selected code up" })
 vim.keymap.set("n", "<leader>v", ":vsplit<CR>", { desc = "Split window vertically" })
 vim.keymap.set("n", "<leader>h", ":split<CR>", { desc = "Split window horizontally" })
 vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
-vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
+vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
 vim.keymap.set("n", "<leader>s", 'q:isilent grep  |cope<left><left><left><left><left><left>',
   { desc = "Search via grep" })
 vim.keymap.set("n", "<leader>w", grep_under_cursor, { desc = "Search current word via grep" })
