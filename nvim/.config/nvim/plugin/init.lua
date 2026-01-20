@@ -31,6 +31,8 @@ vim.o.completeopt = "fuzzy,menuone,noselect"
 vim.o.autocomplete = true
 vim.o.laststatus = 3
 vim.schedule(function() vim.o.clipboard = "unnamedplus" end)
+vim.cmd('filetype indent on')
+vim.opt.autoindent = true
 
 function _G.find(cmdarg)
   local input = tostring(cmdarg or "")
