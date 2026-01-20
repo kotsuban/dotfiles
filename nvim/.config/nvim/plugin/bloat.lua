@@ -59,6 +59,24 @@ require("nvim-treesitter.configs").setup({
 require("treesitter-context").setup({ mode = "topline" })
 vim.api.nvim_set_hl(0, "TreesitterContextBottom", { gui = nil }) -- Fix treesitter-context ugly line.
 
+vim.pack.add({
+  "https://github.com/MunifTanjim/nui.nvim",
+  "https://github.com/saxon1964/neovim-tips",
+})
+require("neovim_tips").setup({
+  user_file = vim.fn.stdpath("config") .. "/neovim_tips/user_tips.md",
+  user_tip_prefix = "[User] ",
+  warn_on_conflicts = true,
+  daily_tip = 2,
+})
+vim.keymap.set("n", "to", ":NeovimTips<CR>", { desc = "Neovim tips", silent = true })
+vim.keymap.set("n", "tb", ":NeovimTipsBookmarks<CR>", { desc = "Bookmarked tips", silent = true })
+vim.keymap.set("n", "te", ":NeovimTipsEdit<CR>", { desc = "Edit your Neovim tips", silent = true })
+vim.keymap.set("n", "ta", ":NeovimTipsAdd<CR>", { desc = "Add your Neovim tip", silent = true })
+vim.keymap.set("n", "th", ":help neovim-tips<CR>", { desc = "Neovim tips help", silent = true })
+vim.keymap.set("n", "tr", ":NeovimTipsRandom<CR>", { desc = "Show random tip", silent = true })
+vim.keymap.set("n", "tp", ":NeovimTipsPdf<CR>", { desc = "Open Neovim tips PDF", silent = true })
+
 vim.pack.add({ "https://github.com/stevearc/oil.nvim" })
 function _G.get_oil_winbar()
   local bufnr = vim.api.nvim_win_get_buf(vim.g.statusline_winid)
