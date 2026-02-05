@@ -211,7 +211,7 @@ _G.diff = function(symbol, type)
 end
 _G.branch = function()
   local git_dir = vim.fs.find(".git", { upward = true, type = "directory" })[1]
-  if git_dir == "" then
+  if git_dir == "" or git_dir == nil then
     return ""
   end
 
