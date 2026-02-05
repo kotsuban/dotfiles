@@ -273,11 +273,20 @@ vim.diagnostic.config({
   },
 })
 
-vim.lsp.enable({ "clangd", "lua_ls", "ts_ls", "eslint", "stylelint-lsp", "somesass_ls" }) -- https://github.com/neovim/nvim-lspconfig
+vim.treesitter.language.register("typescript", { 'ts' }) -- https://github.com/nvim-treesitter/nvim-treesitter/blob/4967fa48b0fe7a7f92cee546c76bb4bb61bb14d5/plugin/filetypes.lua#L62
+vim.treesitter.language.register("javascript", { 'javascriptreact', 'ecma', 'ecmascript', 'jsx', 'js' })
+vim.treesitter.language.register("tsx", { 'typescriptreact', 'typescript.tsx' })
+
+vim.lsp.enable({ "clangd", "lua_ls", "ts_ls", "eslint" }) -- https://github.com/neovim/nvim-lspconfig
 
 vim.api.nvim_create_autocmd("LspAttach", {
-  callback = function(event)
-    local opts = { buffer = event.buf }
+  callback = function(args)
+    local opts = { buffer = args.buf }
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+
+    if client and client.server_capabilities.semanticTokensProvider then
+      client.server_capabilities.semanticTokensProvider = nil
+    end
 
     vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
     vim.keymap.set("n", "gs", vim.lsp.buf.declaration, opts)
@@ -290,6 +299,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
     vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
     vim.keymap.set("n", "<leader>l", vim.diagnostic.setloclist, opts)
   end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+  callback = function(ev)
+    pcall(vim.treesitter.start, ev.buf)
+  end
 })
 
 local augroup = vim.api.nvim_create_augroup("UserConfig", {})
