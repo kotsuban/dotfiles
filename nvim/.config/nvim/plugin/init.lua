@@ -1,3 +1,4 @@
+-- Global Settings.
 vim.g.mapleader = " "
 vim.o.relativenumber = true
 vim.o.number = true
@@ -34,6 +35,7 @@ vim.schedule(function() vim.o.clipboard = "unnamedplus" end)
 vim.cmd('filetype indent on')
 vim.opt.autoindent = true
 
+-- Plugins.
 vim.pack.add({ "https://github.com/catppuccin/nvim" }, { load = true })
 require("catppuccin").setup({
   flavour = "mocha",
@@ -94,7 +96,6 @@ function _G.get_oil_winbar()
   if dir then
     return vim.fn.fnamemodify(dir, ":~")
   else
-    -- If there is no current directory (e.g. over ssh), just show the buffer name
     return vim.api.nvim_buf_get_name(0)
   end
 end
@@ -123,6 +124,7 @@ vim.keymap.set("n", "+", "<cmd>Oil ~/Downloads/<cr>", { desc = "Open downloads d
 vim.pack.add({ "https://github.com/mason-org/mason.nvim" })
 require("mason").setup()
 
+-- Helpers.
 function _G.find(cmdarg)
   local input = tostring(cmdarg or "")
   local base_dir = nil
@@ -159,6 +161,7 @@ local toggle_quickfix = function()
   return is_open and vim.cmd("cclose") or vim.cmd("copen")
 end
 
+-- Bindings.
 vim.keymap.set("n", "<leader>q", toggle_quickfix, { desc = "Toggle quickfix buffer" })
 vim.keymap.set({ "n" }, "<Esc><Esc>", ":silent! close<CR>", { desc = "Close current window" })
 vim.keymap.set("v", "v", "g_", { noremap = true, desc = "Visual to end of line (non-newline)" })
@@ -176,6 +179,7 @@ vim.keymap.set("n", "<leader>w", grep_under_cursor, { desc = "Search current wor
 vim.keymap.set("n", "<leader>f", ":find ", { desc = "Find file" })
 vim.keymap.set("n", "<leader>b", ":buffer ", { desc = "Open buffers" })
 vim.keymap.set("n", "<leader>g", '<cmd>G<CR>', { desc = "Open git fugitive" })
+vim.keymap.set("n", "<leader><leader>", ':make ', { desc = "Build via compiler" })
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
@@ -185,6 +189,7 @@ vim.keymap.set('n', '<M-j>', '<cmd>resize -2<cr>', { desc = 'Decrease Window Hei
 vim.keymap.set('n', '<M-h>', '<cmd>vertical resize -2<cr>', { desc = 'Decrease Window Width' })
 vim.keymap.set('n', '<M-l>', '<cmd>vertical resize +2<cr>', { desc = 'Increase Window Width' })
 
+-- Statusline.
 local colors = require("catppuccin.palettes").get_palette "mocha"
 vim.api.nvim_set_hl(0, "StatusLineBlue", { fg = colors.blue, bold = true })
 vim.api.nvim_set_hl(0, "StatusLineMauve", { fg = colors.mauve, bold = true })
@@ -255,29 +260,13 @@ vim.o.statusline = table.concat {
   "%{v:lua.branch()} ",
 }
 
-vim.diagnostic.config({
-  signs = false,
-  virtual_text = {
-    prefix = "",
-  },
-  underline = true,
-  update_in_insert = true,
-  severity_sort = true,
-  float = {
-    focusable = true,
-    style = "minimal",
-    border = "rounded",
-    source = true,
-    header = "",
-    prefix = "",
-  },
-})
-
+-- Lsp & Treesitter.
 vim.treesitter.language.register("typescript", { 'ts' }) -- https://github.com/nvim-treesitter/nvim-treesitter/blob/4967fa48b0fe7a7f92cee546c76bb4bb61bb14d5/plugin/filetypes.lua#L62
 vim.treesitter.language.register("javascript", { 'javascriptreact', 'ecma', 'ecmascript', 'jsx', 'js' })
 vim.treesitter.language.register("tsx", { 'typescriptreact', 'typescript.tsx' })
 
 vim.lsp.enable({ "clangd", "lua_ls", "ts_ls", "eslint" }) -- https://github.com/neovim/nvim-lspconfig
+vim.lsp.handlers["textDocument/publishDiagnostics"] = function() end
 
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
@@ -301,13 +290,66 @@ vim.api.nvim_create_autocmd("LspAttach", {
   end,
 })
 
-vim.api.nvim_create_autocmd("FileType", {
+-- Diagnostics.
+vim.diagnostic.config({
+  signs = false,
+  virtual_text = {
+    prefix = "",
+  },
+  underline = true,
+  severity_sort = true,
+  float = {
+    focusable = true,
+    style = "minimal",
+    border = "rounded",
+    source = true,
+    header = "",
+    prefix = "",
+  },
+})
+
+local ns = vim.api.nvim_create_namespace("make-diagnostics")
+
+local function quickfix_to_diagnostics()
+  local qf = vim.fn.getqflist()
+  local diagnostics = {}
+
+  for _, item in ipairs(qf) do
+    if item.bufnr > 0 then
+      diagnostics[item.bufnr] = diagnostics[item.bufnr] or {}
+
+      table.insert(diagnostics[item.bufnr], {
+        lnum = (item.lnum or 1) - 1,
+        col = (item.col or 1) - 1,
+        message = item.text or "",
+        severity = vim.diagnostic.severity.ERROR,
+        source = "make",
+      })
+    end
+  end
+
+  for bufnr, diags in pairs(diagnostics) do
+    vim.diagnostic.set(ns, bufnr, diags, {})
+  end
+end
+
+-- Autocommands.
+local augroup = vim.api.nvim_create_augroup("UserConfig", {})
+
+vim.api.nvim_create_autocmd("QuickFixCmdPost", { -- Populate diagnostics with errors from quickfix list.
+  pattern = "make",
+  callback = function()
+    vim.diagnostic.reset(ns)
+    quickfix_to_diagnostics()
+  end,
+})
+
+vim.api.nvim_create_autocmd("FileType", { -- Run treesitter.
+  group = augroup,
   callback = function(ev)
     pcall(vim.treesitter.start, ev.buf)
   end
 })
-
-local augroup = vim.api.nvim_create_augroup("UserConfig", {})
 
 vim.api.nvim_create_autocmd("TextYankPost", { -- Highlight yanked text.
   group = augroup,
