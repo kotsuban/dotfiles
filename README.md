@@ -4,7 +4,7 @@
 
 ## Deps
 - `brew` - package manager.
-- `git bob eza sk ripgrep starship stow tmux zsh-autosuggestions zsh-syntax-highlighting` - brew formulae.
+- `git bob eza sk ripgrep starship stow tmux zsh-autosuggestions zsh-syntax-highlighting zsh-vi-mode` - brew formulae.
 - `ghostty` - brew casks.
 
 ## Installation
