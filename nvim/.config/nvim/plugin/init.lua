@@ -36,30 +36,8 @@ vim.cmd('filetype indent on')
 vim.opt.autoindent = true
 
 -- Plugins.
-vim.pack.add({ "https://github.com/catppuccin/nvim" }, { load = true })
-require("catppuccin").setup({
-  flavour = "mocha",
-  transparent_background = true,
-  color_overrides = {
-    mocha = {
-      base = "#11111b",
-      mantle = "#11111b",
-      crust = "#11111b",
-    },
-  },
-  highlight_overrides = {
-    mocha = function(mocha)
-      return {
-        -- Comment = { fg = mocha.flamingo },
-      }
-    end,
-  },
-  integrations = {
-    gitsigns = true,
-    treesitter = true,
-  },
-})
-vim.cmd.colorscheme("catppuccin")
+vim.pack.add({ "https://github.com/kotsuban/nekomi.nvim" })
+vim.cmd.colorscheme("nekomi")
 
 vim.pack.add({
   "https://github.com/lewis6991/gitsigns.nvim",
@@ -190,7 +168,7 @@ vim.keymap.set('n', '<M-h>', '<cmd>vertical resize -2<cr>', { desc = 'Decrease W
 vim.keymap.set('n', '<M-l>', '<cmd>vertical resize +2<cr>', { desc = 'Increase Window Width' })
 
 -- Statusline.
-local colors = require("catppuccin.palettes").get_palette "mocha"
+local colors = require("nekomi").colors
 vim.api.nvim_set_hl(0, "StatusLineBlue", { fg = colors.blue, bold = true })
 vim.api.nvim_set_hl(0, "StatusLineMauve", { fg = colors.mauve, bold = true })
 vim.api.nvim_set_hl(0, "StatusLineWhite", { fg = colors.white, bold = false })
