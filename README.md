@@ -1,6 +1,6 @@
 # My dotfiles (macos)
 
-<img width="1440" height="900" alt="image" src="https://github.com/user-attachments/assets/4311c477-7fd2-4a89-a9d1-0f0437c272ff" />
+<img width="1440" height="900" alt="image" src="https://imgur.com/Q1BN54z.png" />
 
 ## Deps
 - `brew` - package manager.
