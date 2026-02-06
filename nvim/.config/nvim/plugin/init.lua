@@ -293,9 +293,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 -- Diagnostics.
 vim.diagnostic.config({
   signs = false,
-  virtual_text = {
-    prefix = "",
-  },
+  virtual_text = false,
   underline = true,
   severity_sort = true,
   float = {
