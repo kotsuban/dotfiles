@@ -377,3 +377,13 @@ vim.api.nvim_create_autocmd("CmdlineChanged", { -- Mini fuzzy finder.
     end
   end
 })
+
+vim.api.nvim_create_autocmd("BufReadCmd", { -- Preview images.
+  pattern = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp" },
+  group = augroup,
+  callback = function(args)
+    local image_dir = vim.fn.fnamemodify(args.file, ":h")
+    vim.fn.jobstart({ "viu", args.file }, { term = true, cwd = image_dir })
+    vim.api.nvim_buf_set_name(args.buf, args.file)
+  end
+})
