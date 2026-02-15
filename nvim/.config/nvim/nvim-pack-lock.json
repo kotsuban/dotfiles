@@ -9,7 +9,7 @@
       "src": "https://github.com/mason-org/mason.nvim"
     },
     "nekomi.nvim": {
-      "rev": "28eca8b8b7650cc875ed5a7529df55d0f0c526a9",
+      "rev": "b9c588db97a168ce2d4066975e54addbd408dc73",
       "src": "https://github.com/kotsuban/nekomi.nvim"
     },
     "nvim": {
