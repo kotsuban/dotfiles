@@ -98,9 +98,6 @@ require("oil").setup({
     winbar = "%!v:lua.get_oil_winbar()",
   },
 })
-vim.keymap.set("n", "-", "<cmd>Oil<cr>", { desc = "Open parent directory" })
-vim.keymap.set("n", "_", "<cmd>Oil .<cr>", { desc = "Open root directory" })
-vim.keymap.set("n", "+", "<cmd>Oil ~/Downloads/<cr>", { desc = "Open downloads directory" })
 
 require("mason").setup()
 
@@ -142,6 +139,9 @@ local toggle_quickfix = function()
 end
 
 -- Bindings.
+vim.keymap.set("n", "-", "<cmd>Oil<cr>", { desc = "Open parent directory" })
+vim.keymap.set("n", "_", "<cmd>Oil .<cr>", { desc = "Open root directory" })
+vim.keymap.set("n", "+", "<cmd>Oil ~/Downloads/<cr>", { desc = "Open downloads directory" })
 vim.keymap.set("n", "<leader>q", toggle_quickfix, { desc = "Toggle quickfix buffer" })
 vim.keymap.set({ "n" }, "<Esc><Esc>", ":bdelete<CR>", { desc = "Close current window" })
 vim.keymap.set("v", "v", "g_", { noremap = true, desc = "Visual to end of line (non-newline)" })
