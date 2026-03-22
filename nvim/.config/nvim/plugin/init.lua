@@ -9,7 +9,7 @@ vim.o.winborder = "rounded"
 vim.o.smartcase = true
 vim.o.smartindent = true
 vim.o.updatetime = 250
-vim.opt.wildmode = 'full'
+vim.o.wildmode = 'full'
 vim.o.wildignore = "*/node_modules/*,*/dist/*,*/build/*,*.git,*.cache,*/static/*,*/__pycache__/*,*.venv"
 vim.o.splitright = true
 vim.o.splitbelow = true
@@ -31,18 +31,22 @@ vim.o.complete = "o"
 vim.o.completeopt = "fuzzy,menuone,noselect"
 vim.o.autocomplete = false
 vim.o.laststatus = 3
+vim.o.autoindent = true
+vim.o.syntax = 'off'
 vim.schedule(function() vim.o.clipboard = "unnamedplus" end)
 vim.cmd('filetype indent on')
-vim.opt.autoindent = true
 
 -- Plugins.
-vim.pack.add({ "https://github.com/kotsuban/nekomi.nvim" })
+vim.pack.add({
+  "https://github.com/kotsuban/nekomi.nvim",
+  "https://github.com/lewis6991/gitsigns.nvim",
+  "https://github.com/tpope/vim-fugitive",
+  "https://github.com/stevearc/oil.nvim",
+  "https://github.com/mason-org/mason.nvim"
+})
+
 vim.cmd.colorscheme("nekomi")
 
-vim.pack.add({
-  "https://github.com/lewis6991/gitsigns.nvim",
-  "https://github.com/tpope/vim-fugitive"
-}, { load = true })
 require("gitsigns").setup({
   signcolumn = false,
   numhl = true,
@@ -67,7 +71,6 @@ require("gitsigns").setup({
   end,
 })
 
-vim.pack.add({ "https://github.com/stevearc/oil.nvim" })
 function _G.get_oil_winbar()
   local bufnr = vim.api.nvim_win_get_buf(vim.g.statusline_winid)
   local dir = require("oil").get_current_dir(bufnr)
@@ -99,7 +102,6 @@ vim.keymap.set("n", "-", "<cmd>Oil<cr>", { desc = "Open parent directory" })
 vim.keymap.set("n", "_", "<cmd>Oil .<cr>", { desc = "Open root directory" })
 vim.keymap.set("n", "+", "<cmd>Oil ~/Downloads/<cr>", { desc = "Open downloads directory" })
 
-vim.pack.add({ "https://github.com/mason-org/mason.nvim" })
 require("mason").setup()
 
 -- Helpers.
@@ -239,7 +241,7 @@ vim.o.statusline = table.concat {
 }
 
 -- Lsp & Treesitter.
-vim.treesitter.language.register("typescript", { 'ts' }) -- https://github.com/nvim-treesitter/nvim-treesitter/blob/4967fa48b0fe7a7f92cee546c76bb4bb61bb14d5/plugin/filetypes.lua#L62
+vim.treesitter.language.register("typescript", { 'ts' }) -- https://github.com/nvim-treesitter/nvim-treesitter/blob/main/plugin/filetypes.lua
 vim.treesitter.language.register("javascript", { 'javascriptreact', 'ecma', 'ecmascript', 'jsx', 'js' })
 vim.treesitter.language.register("tsx", { 'typescriptreact', 'typescript.tsx' })
 
