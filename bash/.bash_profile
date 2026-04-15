@@ -5,3 +5,4 @@
 
 export TERMINAL="st"
 export BROWSER="chromium"
+export EDITOR="nvim"
