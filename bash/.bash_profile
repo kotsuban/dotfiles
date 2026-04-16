@@ -6,4 +6,6 @@
 export TERMINAL="st"
 export BROWSER="chromium"
 export EDITOR="nvim"
+export VISUAL="nvim"
+export MANPAGER="nvim +Man!"
 export LIBVA_DRIVER_NAME="radeonsi"
