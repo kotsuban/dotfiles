@@ -1,7 +1,5 @@
 # My dotfiles (macos)
 
-<img width="1440" height="900" alt="image" src="https://imgur.com/Q1BN54z.png" />
-
 ## Deps
 - `brew` - package manager.
 - `git bob eza sk fd ripgrep starship stow tmux viu zsh-autosuggestions zsh-syntax-highlighting zsh-vi-mode` - brew formulae.
