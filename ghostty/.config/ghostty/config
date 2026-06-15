@@ -8,5 +8,6 @@ macos-non-native-fullscreen = true
 macos-option-as-alt = true
 macos-titlebar-style = hidden
 fullscreen = non-native
-
+font-family = "BigBlueTermPlus Nerd Font"
+# font-family = "DepartureMono Nerd Font"
 theme = Catppuccin Mocha
