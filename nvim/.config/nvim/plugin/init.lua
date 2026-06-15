@@ -43,9 +43,15 @@ vim.pack.add({
   "https://github.com/tpope/vim-fugitive",
   "https://github.com/stevearc/oil.nvim",
   "https://github.com/mason-org/mason.nvim"
+  "https://github.com/nvim-treesitter/nvim-treesitter",
 })
 
 vim.cmd.colorscheme("nekomi")
+
+require('nvim-treesitter').setup {
+  install_dir = vim.fn.stdpath('data') .. '/site'
+}
+require('nvim-treesitter').install { 'typescript', 'javascript', 'tsx', 'html', 'scss', 'zsh', 'bash' }
 
 require("gitsigns").setup({
   signcolumn = false,
@@ -248,11 +254,7 @@ vim.o.statusline = table.concat {
   "%{v:lua.branch()}",
 }
 
--- Lsp & Treesitter.
-vim.treesitter.language.register("typescript", { 'ts' }) -- https://github.com/nvim-treesitter/nvim-treesitter/blob/main/plugin/filetypes.lua
-vim.treesitter.language.register("javascript", { 'javascriptreact', 'ecma', 'ecmascript', 'jsx', 'js' })
-vim.treesitter.language.register("tsx", { 'typescriptreact', 'typescript.tsx' })
-
+-- Lsp.
 vim.lsp.enable({ "clangd", "lua_ls", "ts_ls", "eslint" }) -- https://github.com/neovim/nvim-lspconfig
 vim.lsp.handlers["textDocument/publishDiagnostics"] = function() end
 
