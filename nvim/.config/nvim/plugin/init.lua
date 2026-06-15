@@ -194,6 +194,14 @@ _G.diff = function(symbol, type)
   end
   return gitsigns[type] and gitsigns[type] > 0 and (symbol .. gitsigns[type] .. " ") or ""
 end
+_G.on = function()
+  local git_dir = vim.fs.find(".git", { upward = true, type = "directory" })[1]
+  if git_dir == "" or git_dir == nil then
+    return ""
+  end
+
+  return "on "
+end
 _G.branch = function()
   local git_dir = vim.fs.find(".git", { upward = true, type = "directory" })[1]
   if git_dir == "" or git_dir == nil then
@@ -211,7 +219,7 @@ _G.branch = function()
     branch = head:sub(1, 6)
   end
 
-  return " " .. branch
+  return branch .. " "
 end
 
 vim.o.statusline = table.concat {
@@ -233,11 +241,11 @@ vim.o.statusline = table.concat {
   "%#StatusLineYellow#",
   "%{v:lua.diagnostics('󰀪 ', 'WARN')}",
   "%#StatusLineMauve#",
-  "%{v:lua.directory()}",
+  "%{v:lua.directory()} ",
   "%#StatusLineWhite#",
-  " on ",
+  "%{v:lua.on()}",
   "%#StatusLineBlue#",
-  "%{v:lua.branch()} ",
+  "%{v:lua.branch()}",
 }
 
 -- Lsp & Treesitter.
