@@ -23,6 +23,7 @@ vim.o.linebreak = true
 vim.o.confirm = true
 vim.o.complete = "o"
 vim.o.completeopt = "fuzzy,menuone,noselect"
+vim.o.cursorline = true
 vim.o.autocomplete = false
 vim.o.laststatus = 3
 vim.o.autoindent = true
