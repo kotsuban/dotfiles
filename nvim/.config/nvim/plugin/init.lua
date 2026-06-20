@@ -33,7 +33,6 @@ vim.cmd('filetype indent on')
 vim.pack.add({
   "https://github.com/kotsuban/nekomi.nvim",
   "https://github.com/lewis6991/gitsigns.nvim",
-  "https://github.com/tpope/vim-fugitive",
   "https://github.com/mason-org/mason.nvim",
   "https://github.com/nvim-treesitter/nvim-treesitter",
   "https://github.com/wsdjeg/vim-fetch"
