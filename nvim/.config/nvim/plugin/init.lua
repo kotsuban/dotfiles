@@ -2,7 +2,6 @@
 vim.g.mapleader = " "
 vim.o.relativenumber = true
 vim.o.number = true
-vim.o.statuscolumn = '%C%s%=%{v:relnum?v:relnum:v:lnum} '
 vim.o.undofile = true
 vim.o.ignorecase = true
 vim.o.winborder = "rounded"
@@ -48,8 +47,7 @@ require('nvim-treesitter').setup {
 require('nvim-treesitter').install { 'typescript', 'javascript', 'tsx', 'html', 'scss', 'zsh', 'bash' }
 
 require("gitsigns").setup({
-  signcolumn = false,
-  numhl = true,
+  signcolumn = true,
   on_attach = function(bufnr)
     local gitsigns = require("gitsigns")
 
