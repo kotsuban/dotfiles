@@ -12,17 +12,13 @@
       "rev": "b9c588db97a168ce2d4066975e54addbd408dc73",
       "src": "https://github.com/kotsuban/nekomi.nvim"
     },
-    "nvim": {
-      "rev": "211dc3649f775c5a390e9fae07bf20d985f8dcf2",
-      "src": "https://github.com/catppuccin/nvim"
+    "nvim-treesitter": {
+      "rev": "4916d6592ede8c07973490d9322f187e07dfefac",
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter"
     },
-    "oil.nvim": {
-      "rev": "bbad9a76b2617ce1221d49619e4e4b659b3c61fc",
-      "src": "https://github.com/stevearc/oil.nvim"
-    },
-    "vim-fugitive": {
-      "rev": "61b51c09b7c9ce04e821f6cf76ea4f6f903e3cf4",
-      "src": "https://github.com/tpope/vim-fugitive"
+    "vim-fetch": {
+      "rev": "b88bc5c4a8652b73bcdb577e0c90700a5064fd00",
+      "src": "https://github.com/wsdjeg/vim-fetch"
     }
   }
 }
