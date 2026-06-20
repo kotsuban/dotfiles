@@ -1,7 +1,7 @@
 export PATH=$HOME/brew/bin:$PATH
 export LANG=en_US.UTF-8
 export EZA_CONFIG_DIR=$HOME/.config/eza
-export EDITOR=edit
+export EDITOR=e
 export COMPILER=gcc
 export VISUAL=nvim
 export MANPAGER="nvim +Man!"
@@ -21,7 +21,7 @@ cd() {
   builtin cd "$@" && printf '%s\n' "$PWD" >> "$CDHISTFILE"
 }
 
-edit() {
+e() {
   command nvim "$@" && printf '%s\n' "$1" >> "$EDHISTFILE"
 }
 
