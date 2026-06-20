@@ -1,4 +1,4 @@
-export PATH=$HOME/brew/bin:$PATH
+export PATH=$HOME/brew/bin:$HOME/.local/bin:$PATH
 export LANG=en_US.UTF-8
 export EZA_CONFIG_DIR=$HOME/.config/eza
 export EDITOR=e
