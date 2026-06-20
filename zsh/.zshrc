@@ -17,6 +17,10 @@ source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 
 eval "$(starship init zsh)"
 
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - zsh)"
+
 cd() {
   builtin cd "$@" && printf '%s\n' "$PWD" >> "$CDHISTFILE"
 }
