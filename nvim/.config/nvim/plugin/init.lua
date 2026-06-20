@@ -43,7 +43,7 @@ vim.cmd.colorscheme("nekomi")
 require('nvim-treesitter').setup {
   install_dir = vim.fn.stdpath('data') .. '/site'
 }
-require('nvim-treesitter').install { 'typescript', 'javascript', 'tsx', 'html', 'scss', 'zsh', 'bash' }
+require('nvim-treesitter').install { 'typescript', 'javascript', 'tsx', 'html', 'scss', 'zsh', 'bash', 'ledger' }
 
 require("gitsigns").setup({
   signcolumn = true,
