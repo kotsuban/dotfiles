@@ -112,3 +112,57 @@ s() {
     $EDITOR "$(echo $file | cut -d: -f1-3)"
   done
 }
+
+# Touch.
+t() {
+  touch $@
+  $EDITOR $@
+}
+
+# Git Files.
+gf() {
+  while true; do
+    local file="$(git status --porcelain | awk '{print $2}' | xargs -r stat -f='%m %N' 2>/dev/null | sort -rn | cut -d' ' -f2- | "$FZZYPICKER" --lines=15 --p='Git Changes:')"
+    [ -z "$file" ] && break
+    $EDITOR "$file"
+  done
+}
+
+# Add file to git.
+ga() {
+  while true; do
+    local file="$(git status --porcelain | awk '{print $2}' | xargs -r stat -f='%m %N' 2>/dev/null | sort -rn | cut -d' ' -f2- | "$FZZYPICKER" --lines=15 --p='Stage File:')"
+    [ -z "$file" ] && break
+    git add -p "$file"
+  done
+}
+
+# Show diff of specific commit.
+gc() {
+  while true; do
+    local file="$(git log --oneline | "$FZZYPICKER" --lines=15 --p='Git Commits:' | awk '{print $1}')"
+    [ -z "$file" ] && break
+    git show "$file"
+  done
+}
+
+# Show local commits.
+gl() {
+  git log @{u}..
+}
+
+# Show commands list.
+h() {
+  echo "e - Edit File"
+  echo "c - Recent Directories"
+  echo "f - Recent Files"
+  echo "o - Current Working Directory Files"
+  echo "b - Browse Directories"
+  echo "x - Compile with $COMPILER"
+  echo "s - Search"
+  echo "t - Create File"
+  echo "gf - Git Files"
+  echo "ga - Stage File"
+  echo "gc - Git Commits"
+  echo "gl - Git Local Log"
+}
