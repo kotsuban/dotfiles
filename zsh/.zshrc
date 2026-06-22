@@ -25,8 +25,9 @@ cd() {
   builtin cd "$@" && printf '%s\n' "$PWD" >> "$CDHISTFILE"
 }
 
+# Edit file.
 e() {
-  command nvim "$@" && printf '%s\n' "$1" >> "$EDHISTFILE"
+  command nvim "$@" && printf '%s\n' "$(realpath "$1" | sed 's/:.*$//')" >> "$EDHISTFILE"
 }
 
 # Open recent directories.
