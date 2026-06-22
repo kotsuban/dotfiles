@@ -2,7 +2,7 @@
 
 ## Deps
 - `brew` - package manager.
-- `git bob eza sk fd ripgrep starship stow tmux viu zsh-autosuggestions zsh-syntax-highlighting zsh-vi-mode` - brew formulae.
+- `git bob fzy fd ripgrep starship stow tmux viu zsh-autosuggestions zsh-syntax-highlighting zsh-vi-mode` - brew formulae.
 - `ghostty` - brew casks.
 
 ## Installation
@@ -21,6 +21,10 @@ To install LSP server:
 - Install cli from `:Mason`.
 
 To install Tresitter language:
+- Add required language under require('nvim-treesitter').install in init.lua.
+
+or if you like pain...
+
 - Find required parser using [luarocks](`https://luarocks.org/`).
 - Clone git repo into ~/Downloads.
 - Build parser using treesitter-cli `tree-sitter build --output parser.so /path/to/tree-sitter-parser`
