@@ -74,13 +74,13 @@ require("mason").setup()
 -- Bindings.
 vim.keymap.set({ "n" }, "<Esc><Esc>", ":bdelete<CR>", { desc = "Close current window" })
 vim.keymap.set("v", "v", "g_", { noremap = true, desc = "Visual to end of line (non-newline)" })
+vim.keymap.set("n", "<leader><leader>", ":wq<CR>", { noremap = true, desc = "Save and close buffer" })
 vim.keymap.set("n", "<leader>`", "<C-^>", { noremap = true, desc = "Swap with previous file" })
 vim.keymap.set("n", "<leader>o", ":update<CR> :source<CR>", { desc = "Reload nvim config" })
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selected code down" })
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selected code up" })
 vim.keymap.set("v", "<", "<gv", { desc = "Indent left and reselect" })
 vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
-vim.keymap.set("n", "<leader>g", '<cmd>G<CR>', { desc = "Open git fugitive" })
 
 -- Statusline.
 local colors = require("nekomi").colors
