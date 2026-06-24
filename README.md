@@ -2,7 +2,7 @@
 
 ## Deps
 - `brew` - package manager.
-- `git bob fzy fd ripgrep starship stow tmux viu zsh-autosuggestions zsh-syntax-highlighting zsh-vi-mode` - brew formulae.
+- `fish git nvim fzy fd ripgrep stow tmux viu` - brew formulae.
 - `ghostty` - brew casks.
 
 ## Installation
