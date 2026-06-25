@@ -1,28 +1,24 @@
 {
   "plugins": {
     "gitsigns.nvim": {
-      "rev": "6e3c66548035e50db7bd8e360a29aec6620c3641",
+      "rev": "2038c666bd9d8a0b7349a0b6ee00dc83104b9ecf",
       "src": "https://github.com/lewis6991/gitsigns.nvim"
     },
     "mason.nvim": {
-      "rev": "44d1e90e1f66e077268191e3ee9d2ac97cc18e65",
+      "rev": "2a6940af80375532e5e9e7c1f2fc6319a1b7a69d",
       "src": "https://github.com/mason-org/mason.nvim"
     },
     "nekomi.nvim": {
-      "rev": "b9c588db97a168ce2d4066975e54addbd408dc73",
+      "rev": "6438702e72126ca0457956f387068ae62e80eb8d",
       "src": "https://github.com/kotsuban/nekomi.nvim"
     },
-    "nvim": {
-      "rev": "211dc3649f775c5a390e9fae07bf20d985f8dcf2",
-      "src": "https://github.com/catppuccin/nvim"
+    "nvim-treesitter": {
+      "rev": "4916d6592ede8c07973490d9322f187e07dfefac",
+      "src": "https://github.com/nvim-treesitter/nvim-treesitter"
     },
-    "oil.nvim": {
-      "rev": "bbad9a76b2617ce1221d49619e4e4b659b3c61fc",
-      "src": "https://github.com/stevearc/oil.nvim"
-    },
-    "vim-fugitive": {
-      "rev": "61b51c09b7c9ce04e821f6cf76ea4f6f903e3cf4",
-      "src": "https://github.com/tpope/vim-fugitive"
+    "vim-fetch": {
+      "rev": "b88bc5c4a8652b73bcdb577e0c90700a5064fd00",
+      "src": "https://github.com/wsdjeg/vim-fetch"
     }
   }
 }
