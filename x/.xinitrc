@@ -3,6 +3,7 @@ export $(dbus_launch --exit-with-session --exit-with-x11)
 
 feh --bg-scale ~/Downloads/wp.png
 pipewire &
+picom --backend glx -b &
 
 while true; do
 	xsetroot -rv -name " $(date +"%d-%m-%Y %H:%M") "
