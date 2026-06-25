@@ -1,6 +1,7 @@
 #!/bin/bash
 export $(dbus_launch --exit-with-session --exit-with-x11)
 
+feh --bg-scale ~/Downloads/wp.png
 pipewire &
 
 while true; do
