@@ -113,8 +113,16 @@ if status is-interactive
   end
 
   function tf --description "touch file"
-    touch $argv
-    $EDITOR $argv
+    while true
+      set -l file (fd --hidden --color=never --type f --exclude .git -X stat -f='%m %N' | sort -r | cut -d' ' -f2- | sed 's|^\./||' | $FZZYPICKER --p='Touch Files:')
+
+      test -z "$file"
+      and break
+
+      read -P "Touch: " -c "$file" name
+      test -n "$name"
+      and $EDITOR "$name"
+    end
   end
 
   function of --description "obliterate file"
