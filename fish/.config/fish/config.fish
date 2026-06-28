@@ -41,9 +41,9 @@ if status is-interactive
     end
   end
 
-  function cf --description "current files"
+  function bf --description "browse files"
     while true
-      set -l file (fd --hidden --color=never --type f --exclude .git -X stat -f='%m %N' | sort -r | cut -d' ' -f2- | sed 's|^\./||' | $FZZYPICKER --p='Files:')
+      set -l file (fd --hidden --color=never --type f --exclude .git -X stat -f='%m %N' | sort -r | cut -d' ' -f2- | sed 's|^\./||' | $FZZYPICKER --p='Browse Files:')
 
       test -z "$file"
       and break
@@ -117,9 +117,9 @@ if status is-interactive
     $EDITOR $argv
   end
 
-  function rf --description "remove file"
+  function of --description "obliterate file"
     while true
-      set -l file (fd --hidden --color=never --type f --exclude .git -X stat -f='%m %N' | sort -r | cut -d' ' -f2- | sed 's|^\./||' | $FZZYPICKER --p='Remove Files:')
+      set -l file (fd --hidden --color=never --type f --exclude .git -X stat -f='%m %N' | sort -r | cut -d' ' -f2- | sed 's|^\./||' | $FZZYPICKER --p='Obliterate Files:')
 
       test -z "$file"
       and break
@@ -130,7 +130,7 @@ if status is-interactive
 
   function mf --description "move file"
     while true
-      set -l file (fd --hidden --color=never --type f --exclude .git -X stat -f='%m %N' | sort -r | cut -d' ' -f2- | sed 's|^\./||' | $FZZYPICKER --p='Rename Files:')
+      set -l file (fd --hidden --color=never --type f --exclude .git -X stat -f='%m %N' | sort -r | cut -d' ' -f2- | sed 's|^\./||' | $FZZYPICKER --p='Move Files:')
 
       test -z "$file"
       and break
@@ -176,7 +176,7 @@ if status is-interactive
 
   function he --description "help"
       echo "tf - touch file"
-      echo "rf - remove file"
+      echo "of - obliterate file"
       echo "mf - move file"
       echo "ef - edit file"
       echo "rd - recent directories"
