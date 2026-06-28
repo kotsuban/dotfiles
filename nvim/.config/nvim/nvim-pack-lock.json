@@ -1,15 +1,15 @@
 {
   "plugins": {
     "gitsigns.nvim": {
-      "rev": "6e3c66548035e50db7bd8e360a29aec6620c3641",
+      "rev": "2038c666bd9d8a0b7349a0b6ee00dc83104b9ecf",
       "src": "https://github.com/lewis6991/gitsigns.nvim"
     },
     "mason.nvim": {
-      "rev": "44d1e90e1f66e077268191e3ee9d2ac97cc18e65",
+      "rev": "2a6940af80375532e5e9e7c1f2fc6319a1b7a69d",
       "src": "https://github.com/mason-org/mason.nvim"
     },
     "nekomi.nvim": {
-      "rev": "b9c588db97a168ce2d4066975e54addbd408dc73",
+      "rev": "5bdc92a2365ef4fb1444ac890deaf4525431023d",
       "src": "https://github.com/kotsuban/nekomi.nvim"
     },
     "nvim-treesitter": {
