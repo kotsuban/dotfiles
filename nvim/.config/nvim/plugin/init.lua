@@ -83,7 +83,7 @@ vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
 -- Statusline.
 local colors = require("nekomi").colors
 vim.api.nvim_set_hl(0, "StatusLineBlue", { fg = colors.blue, bold = true })
-vim.api.nvim_set_hl(0, "StatusLineMauve", { fg = colors.mauve, bold = true })
+vim.api.nvim_set_hl(0, "StatusLinePink", { fg = colors.pink, bold = true })
 vim.api.nvim_set_hl(0, "StatusLineWhite", { fg = colors.white, bold = false })
 vim.api.nvim_set_hl(0, "StatusLineYellow", { fg = colors.yellow, bold = false })
 vim.api.nvim_set_hl(0, "StatusLineRed", { fg = colors.red, bold = false })
@@ -151,11 +151,11 @@ vim.o.statusline = table.concat {
   "%{v:lua.diagnostics('󰅚 ', 'ERROR')}",
   "%#StatusLineYellow#",
   "%{v:lua.diagnostics('󰀪 ', 'WARN')}",
-  "%#StatusLineMauve#",
+  "%#StatusLineBlue#",
   "%{v:lua.directory()} ",
   "%#StatusLineWhite#",
   "%{v:lua.on()}",
-  "%#StatusLineBlue#",
+  "%#StatusLinePink#",
   "%{v:lua.branch()}",
 }
 
