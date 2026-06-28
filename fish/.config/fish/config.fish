@@ -2,6 +2,7 @@ set -gx PATH $HOME/brew/bin $HOME/.local/bin $PATH
 set -gx VISUAL nvim
 set -gx MANPAGER "nvim +Man!"
 set -g fish_key_bindings fish_vi_key_bindings
+set -g fish_greeting ''
 
 pyenv init - fish | source
 
