@@ -167,7 +167,7 @@ if status is-interactive
       test -z "$file"
       and break
 
-      git add -p "$file"
+      git add -e "$file"
     end
   end
 
