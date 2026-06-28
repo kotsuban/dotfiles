@@ -69,7 +69,24 @@ require("gitsigns").setup({
 
 require("mason").setup()
 
+function revert()
+  local line_start = vim.fn.line("'<") - 1
+  local line_end = vim.fn.line("'>")
+  local lines = vim.api.nvim_buf_get_lines(0, line_start, line_end, false)
+  local filtered = {}
+
+  for i, line in ipairs(lines) do
+    if not line:match("^%+") then
+      line = line:gsub("^%-", " ")
+      table.insert(filtered, line)
+    end
+  end
+
+  vim.api.nvim_buf_set_lines(0, line_start, line_end, false, filtered)
+end
+
 -- Bindings.
+vim.keymap.set('v', '<leader>r', '<Esc>:lua revert()<CR>')
 vim.keymap.set({ "n" }, "<Esc><Esc>", ":bdelete<CR>", { desc = "Close current window" })
 vim.keymap.set("v", "v", "g_", { noremap = true, desc = "Visual to end of line (non-newline)" })
 vim.keymap.set("n", "<leader><leader>", ":wq<CR>", { noremap = true, desc = "Save and close buffer" })
